@@ -58,6 +58,7 @@ bubble_sprite_t *bubble_spriteload(char *filename)
 	p->colliderect.y = fgetc(fp)|(fgetc(fp)<<8);
 	p->colliderect.w = fgetc(fp)|(fgetc(fp)<<8);
 	p->colliderect.h = fgetc(fp)|(fgetc(fp)<<8);
+	p->animate = 1;
 	p->nanims = fgetc(fp)|(fgetc(fp)<<8);
 	p->anims = malloc(p->nanims*sizeof(flash_anim_t*));
 	if(p->anims == NULL && p->nanims != 0) return NULL;
