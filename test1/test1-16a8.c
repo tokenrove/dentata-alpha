@@ -1,6 +1,6 @@
 /*
- * Test software for foo libraries, like test1 but this time using
- * additionally the crash and wood libraries.
+ * Test software for foo libraries, testing the first four villains.
+ * [air, flash, metal, quick]
  *
  * Julian Squires <tek@wiw.org> 2000
  */
@@ -13,30 +13,33 @@
 #include <flash.h>
 #include <quick.h>
 #include <metal.h>
-#include <wood.h>
-#include <crash.h>
 
 #define NSTANDFRAMES 4
 #define NWALKFRAMES 4
-#define FRAMESPERSECOND 72
+#define FRAMESPERSECOND 24
+#define BUFLEN 81
+
 #define SCRW 320
 #define SCRH 200
-#define BUFLEN 81
+#define SCRTYPE (AIR_16BPP|AIR_ALPHA8)
 
 struct gamedat_s {
 	flash_image_t *bg;
 	flash_anim_t *spr_stand, *spr_walkleft, *spr_walkright;
-	crash_font_t *font;
 };
 
 void mainloop(struct gamedat_s gd)
 {
-	int sprx, spry, fps;
+	int sprx, spry, radius, fps, mode;
+	float theta;
 	void *qh;
 	flash_anim_t *sprite;
 
 	fps = FRAMESPERSECOND;
-	sprx = SCRW/2; spry = SCRH/2;
+	theta = 0;
+	radius = 8;
+	mode = 1;
+	sprx = 100; spry = 100;
 	sprite = gd.spr_stand;
 
 	while(1) {
@@ -44,43 +47,43 @@ void mainloop(struct gamedat_s gd)
 		if(metal_ishit(METAL_K_ESCAPE))
 			break;
 		if(metal_ishit(METAL_K_UP)) {
-			if(spry > SCRH/2)
-				spry--;
+			if(mode == 0)
+				radius++;
 			else
-				if(wood_pan(0, -1)&2)
-					if(spry >= 0) spry--;
+				spry--;
 		}
 		if(metal_ishit(METAL_K_DOWN)) {
-			if(spry < SCRH/2)
-				spry++;
+			if(mode == 0)
+				radius--;
 			else
-				if(wood_pan(0, 1)&2)
-					if(spry < SCRH) spry++;
+				spry++;
 		}
 		if(metal_ishit(METAL_K_LEFT)) {
 			sprite = gd.spr_walkleft;
-			if(sprx > SCRW/2)
-				sprx--;
+			if(mode == 0)
+				theta -= 0.615;
 			else
-				if(wood_pan(-1, 0)&1)
-					if(sprx >= 0) sprx--;
+				sprx--;
 		} else if(metal_ishit(METAL_K_RIGHT)) {
 			sprite = gd.spr_walkright;
-			if(sprx < SCRW/2)
-				sprx++;
+			if(mode == 0)
+				theta += 0.615;
 			else
-				if(wood_pan(1, 0)&1)
-					if(sprx < SCRW) sprx++;
+				sprx++;
+		} else if(metal_ishit(METAL_K_ENTER)) {
+			mode ^= 1;
 		} else
 			sprite = gd.spr_stand;
 
 		qh = quick_start(fps);
 
-		wood_updatebg();
-		air_blit(flash_animnextframe(sprite), sprx, spry);
-		wood_updatefg();
+		if(mode == 0) {
+			sprx = 100+radius*cos(theta);
+			spry = 100+radius*sin(theta);
+		}
 
-		crash_printf(sprx, gd.font->height, gd.font, "Foobar %d, %d", sprx, spry);
+		air_vanillablit(gd.bg, 0, 0);
+		air_blit(flash_animnextframe(sprite), sprx, spry);
 
 		air_update();
 		quick_stop(qh);
@@ -94,27 +97,19 @@ int main(int argc, char **argv)
 	char buffer[BUFLEN];
 	struct gamedat_s gd;
 	int i;
+	flash_image_t *tmp;
 
-	if(air_init(SCRW, SCRH, AIR_8BPP) != 1) exit(EXIT_FAILURE);
+	if(air_init(SCRW, SCRH, SCRTYPE) != 1) exit(EXIT_FAILURE);
 
 	if(metal_init() != 1) {
 		air_close();
 		exit(EXIT_FAILURE);
 	}
 
-	wood_wipe(SCRW, SCRH, AIR_8BPP);
-	gd.bg = flash_loadpcx("testbg00.pcx");
-	air_setpalette(gd.bg->palette);
-
-//	gd.font = crash_loadrawfont("readable.f08", 8, 8, 249);
-	gd.font = crash_loadrawfont("future.f14", 8, 14,
-	                            flash_closestcolor(255, 255, 255));
-
-	wood_addspritetobg(gd.bg, 2);
-	wood_addtilemaptobg(wood_loadtilemap("flatwrld.map"), 1);
-	if(argc > 1 && strcmp(argv[1], "-fg") == 0)
-		wood_addspritetofg(flash_loadpcx("testbg02.pcx"), 2);
-	gd.spr_stand = flash_animnew(2);
+	gd.bg = flash_loadpcx("testbg.pcx");
+	gd.bg = flash_imgtypeconvert(gd.bg, SCRTYPE);
+	if(SCRTYPE&AIR_8BPP) air_setpalette(gd.bg->palette);
+	gd.spr_stand = flash_animnew(5);
 	gd.spr_walkleft = flash_animnew(2);
 	gd.spr_walkright = flash_animnew(2);
 
@@ -127,25 +122,27 @@ int main(int argc, char **argv)
 
 	for(i = 0; i < NSTANDFRAMES; i++) {
 		sprintf(buffer, "spstnd%02d.pcx", i);
-		flash_animaddframe(gd.spr_stand, flash_loadpcx(buffer));
+		tmp = flash_imgtypeconvert(flash_loadpcx(buffer), SCRTYPE);
+		flash_animaddframe(gd.spr_stand, tmp);
 	}
 	for(i = 0; i < NWALKFRAMES; i++) {
 		sprintf(buffer, "spwlkl%02d.pcx", i);
-		flash_animaddframe(gd.spr_walkleft, flash_loadpcx(buffer));
+		tmp = flash_imgtypeconvert(flash_loadpcx(buffer), SCRTYPE);
+		flash_animaddframe(gd.spr_walkleft, tmp);
 		sprintf(buffer, "spwlkr%02d.pcx", i);
-		flash_animaddframe(gd.spr_walkright, flash_loadpcx(buffer));
+		tmp = flash_imgtypeconvert(flash_loadpcx(buffer), SCRTYPE);
+		flash_animaddframe(gd.spr_walkright, tmp);
 	}
 
 	mainloop(gd);
 
-//	wood_wipe(0, 0, 0);
+	flash_imgdelete(gd.bg);
 	flash_animdelete(gd.spr_stand);
 	flash_animdelete(gd.spr_walkleft);
 	flash_animdelete(gd.spr_walkright);
-	crash_delete(gd.font);
 	metal_close();
 	air_close();
 	exit(EXIT_SUCCESS);
 }
 
-/* test2.c */
+/* test1.c */

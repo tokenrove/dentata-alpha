@@ -62,9 +62,11 @@ void mainloop(struct gamedat_s gd)
 		if(metal_ishit(METAL_K_ESCAPE))
 			break;
 		if(metal_ishit(METAL_K_LEFT)) {
-			if(wood_iswalkablerect(hp->x-1, hp->y,
-			                       hp->colliderect.w,
-			                       hp->colliderect.h)){
+//			if(wood_iswalkablerect(hp->x-1, hp->y,
+//			                       hp->colliderect.w,
+//			                       hp->colliderect.h)){
+			if(wood_tiletype(hp->x-1, hp->y, 0) < 2 &&
+			   wood_tiletype(hp->x-1, hp->y+hp->colliderect.h-1, 0) < 2) {
 				bubble_pansprite(gd.hero, -1, 0);
 				if(hp->x-wood_camera_x < SCRW/2)
 					wood_pan(-1, 0);
@@ -73,9 +75,11 @@ void mainloop(struct gamedat_s gd)
 			theta = M_PI;
 		}
 		if(metal_ishit(METAL_K_RIGHT)) {
-			if(wood_iswalkablerect(hp->x+1, hp->y,
-			                       hp->colliderect.w,
-			                       hp->colliderect.h)){
+//			if(wood_iswalkablerect(hp->x+1, hp->y,
+//			                       hp->colliderect.w,
+//			                       hp->colliderect.h)){
+			if(wood_tiletype(hp->x+hp->colliderect.w, hp->y, 0) < 2 &&
+			   wood_tiletype(hp->x+hp->colliderect.w, hp->y+hp->colliderect.h-1, 0) < 2) {
 				bubble_pansprite(gd.hero, 1, 0);
 				if(hp->x-wood_camera_x > SCRW/2)
 					wood_pan(1, 0);
@@ -84,9 +88,11 @@ void mainloop(struct gamedat_s gd)
 			theta = 0;
 		}
 		if(metal_ishit(METAL_K_UP)) {
-			if(wood_iswalkablerect(hp->x, hp->y-1,
-			                       hp->colliderect.w,
-			                       hp->colliderect.h)){
+//			if(wood_iswalkablerect(hp->x, hp->y-1,
+//			                       hp->colliderect.w,
+//			                       hp->colliderect.h)){
+			if(wood_tiletype(hp->x, hp->y-1, 0) < 2 &&
+			   wood_tiletype(hp->x+hp->colliderect.w-1, hp->y-1, 0) < 2) {
 				bubble_pansprite(gd.hero, 0, -1);
 				if(hp->y-wood_camera_y < SCRH/2)
 					wood_pan(0, -1);
@@ -95,9 +101,11 @@ void mainloop(struct gamedat_s gd)
 			theta = M_PI/2;
 		}
 		if(metal_ishit(METAL_K_DOWN)) {
-			if(wood_iswalkablerect(hp->x, hp->y+1,
-			                       hp->colliderect.w,
-			                       hp->colliderect.h)){
+//			if(wood_iswalkablerect(hp->x, hp->y+1,
+//			                       hp->colliderect.w,
+//			                       hp->colliderect.h)){
+			if(wood_tiletype(hp->x, hp->y+hp->colliderect.h, 0) < 2 &&
+			   wood_tiletype(hp->x+hp->colliderect.w-1, hp->y+hp->colliderect.h, 0) < 2) {
 				bubble_pansprite(gd.hero, 0, 1);
 				if(hp->y-wood_camera_y > SCRH/2)
 					wood_pan(0, 1);
@@ -165,11 +173,10 @@ int main(int argc, char **argv)
 	scrollie(gd);
 	crash_delete(gd.font);
 	gd.font = crash_loadrawfont("readable.f08", 8, 8,
-	                            flash_closestcolor(255, 255, 255,
-	                                               air_getpalette()));
+	                            flash_closestcolor(255, 255, 255));
 
 	wood_wipe(SCRW, SCRH, AIR_8BPP);
-	wood_addtilemaptobg(wood_loadtilemap("world1-1.map"), 1);
+	wood_addtilemaptobg(wood_loadtilemap("world00.map"), 1);
 	bubble_init();
 	gd.hero = bubble_addsprite(bubble_spriteload("hero.spr"), 1);
 	gd.head = bubble_addsprite(bubble_spriteload("head.spr"), 2);
@@ -213,8 +220,7 @@ void credits(struct gamedat_s gd)
 	bg = flash_loadpcx("stars.pcx");
 	heat_flatfadein(bg, FRAMESPERSECOND, 1000000);
 	emph = crash_loadrawfont("future.f14", 8, 14,
-	                         flash_closestcolor(192, 0, 0,
-	                                            air_getpalette()));
+	                         flash_closestcolor(192, 0, 0));
 	sh = heat_snowinit(128);
 
 	inc = bginc = 0;

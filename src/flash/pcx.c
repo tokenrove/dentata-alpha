@@ -23,7 +23,7 @@ flash_image_t *flash_loadpcx(char *filename)
 
 	fgetc(fp); /* manufacturer == 0 */
 	if(fgetc(fp) != 5) return NULL; /* we only deal with 8bpp atm */
-	type = AIR_8BPP;
+	type = AIR_8BPP|AIR_PALETTED;
 	if(fgetc(fp) != 1) return NULL; /* encoding == 1 */
 	if(fgetc(fp) != 8) return NULL; /* 8bpp, again */
 	fseek(fp, 4, SEEK_CUR);
@@ -33,7 +33,6 @@ flash_image_t *flash_loadpcx(char *filename)
 
 	p = flash_imgnew(w, h, type);
 	if(p == NULL) return NULL;
-	p->palettetype = 1;
 	p->palette = malloc(256*3);
 	if(p->palette == NULL) return NULL;
 
@@ -55,7 +54,6 @@ flash_image_t *flash_loadpcx(char *filename)
 
 	fseek(fp, -768L, SEEK_END);
 	fread(p->palette, 3, 256, fp);
-	for(i = 0; i < 3*256; i++) p->palette[i] >>= 2;
 
 	fclose(fp);
 	return p;

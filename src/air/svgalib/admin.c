@@ -9,7 +9,7 @@
 #include <vga.h>
 #include "internal.h"
 
-char *air_vbuf;
+unsigned char *air_vbuf;
 unsigned char *air_palette;
 int air_mode_w, air_mode_h, air_mode_type;
 
@@ -60,11 +60,15 @@ void air_close(void)
 void air_update(void)
 {
 	int i, inc;
-	char *p;
+	unsigned char *p;
 
 	if(air_mode_type&AIR_8BPP) inc = 1;
 	else if(air_mode_type&AIR_16BPP) inc = 2;
 	else if(air_mode_type&AIR_24BPP) inc = 3;
+	else {
+		/* bad things occur */
+		inc = 1;
+	}
 	inc *= air_mode_w;
 	p = air_vbuf;
 
@@ -76,9 +80,11 @@ void air_setpalette(unsigned char *palette)
 {
 	int i;
 
-	for(i = 0; i < 256; i++)
-		vga_setpalette(i, palette[i*3], palette[i*3+1],
-		               palette[i*3+2]);
+	if(air_mode_type&AIR_8BPP) {
+		for(i = 0; i < 256; i++)
+			vga_setpalette(i, palette[i*3]>>2, palette[i*3+1]>>2,
+			               palette[i*3+2]>>2);
+	}
 	air_palette = palette;
 	return;
 }

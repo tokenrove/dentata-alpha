@@ -21,7 +21,7 @@ void heat_flatfadescrimg(flash_image_t *after, int fps, int len)
 
 void heat_flatfadeout(int fps, int len)
 {
-	unsigned char *palette;
+	unsigned char *palette, *vbuf;
 	int steps, step, maxval, i;
 	void *qh;
 
@@ -39,6 +39,7 @@ void heat_flatfadeout(int fps, int len)
 		if(step <= 0) step = 1;
 
 		for(steps = 0; steps < (len/(1000000/fps))/2; steps++) {
+			qh = quick_start(fps);
 			for(i = 0; i < 256; i++) {
 				if(palette[3*i+0] > step) palette[3*i+0]-=step;
 				else palette[3*i+0] = 0;
@@ -47,21 +48,38 @@ void heat_flatfadeout(int fps, int len)
 				if(palette[3*i+2] > step) palette[3*i+2]-=step;
 				else palette[3*i+2] = 0;
 			}
-			qh = quick_start(fps);
 			air_setpalette(palette);
 			air_update();
 			quick_stop(qh);
 		}
 		air_setpalette(palette);
 		free(palette);
-	} else {
+
+	} else if(air_mode_type&AIR_16BPP) {
+		steps = len/(1000000/fps);
+		if(steps <= 0) steps = 1;
+		step = 256/steps;
+		if(step <= 0) step = 1;
+		vbuf = air_grab();
+
+		for(steps = 0; steps < (len/(1000000/fps))/2; steps++) {
+			qh = quick_start(fps);
+			for(i = 0; i < air_mode_w*air_mode_h; i++) {
+				if(vbuf[2*i+0] > step) vbuf[2*i+0]-=step;
+				else vbuf[2*i+0] = 0;
+				if(vbuf[2*i+1] > step) vbuf[2*i+1]-=step;
+				else vbuf[2*i+1] = 0;
+			}
+			air_update();
+			quick_stop(qh);
+		}
 	}
 	return;
 }
 
 void heat_flatfadein(flash_image_t *after, int fps, int len)
 {
-	unsigned char *palette;
+	unsigned char *palette, *vbuf;
 	int steps, step, i, maxval;
 	void *qh;
 
@@ -96,7 +114,24 @@ void heat_flatfadein(flash_image_t *after, int fps, int len)
 		}
 		air_setpalette(after->palette);
 		free(palette);
-	} else {
+	} else if(air_mode_type&AIR_16BPP) {
+		steps = len/(1000000/fps);
+		if(steps <= 0) steps = 1;
+		step = 256/steps;
+		if(step <= 0) step = 1;
+		vbuf = air_grab();
+
+		for(steps = 0; steps < (len/(1000000/fps))/2; steps++) {
+			qh = quick_start(fps);
+			for(i = 0; i < air_mode_w*air_mode_h; i++) {
+				if(vbuf[2*i+0] < after->data[2*i+0]-step) vbuf[2*i+0]+=step;
+				else vbuf[2*i+0] = after->data[2*i+0];
+				if(vbuf[2*i+1] < after->data[2*i+1]-step) vbuf[2*i+1]+=step;
+				else vbuf[2*i+1] = after->data[2*i+1];
+			}
+			air_update();
+			quick_stop(qh);
+		}
 	}
 	return;
 }

@@ -32,7 +32,7 @@ void *heat_snowinit(int nflakes)
 	snow->nactive = 0;
 	snow->flake_x = malloc(nflakes*sizeof(int));
 	snow->flake_y = malloc(nflakes*sizeof(int));
-	snow->white = flash_closestcolor(255,255,255,air_getpalette());
+	snow->white = flash_closestcolor(255,255,255);
 	srand(time(NULL));
 
 	return snow;

@@ -28,10 +28,10 @@ int main(int argc, char **argv)
 	}
 
 	for(i = 0; i < img->width*img->height; i++) {
-		img->data[i] = flash_closestcolor((img->palette[3*(unsigned)img->data[i]+0])<<2,
-		                                  (img->palette[3*(unsigned)img->data[i]+1])<<2,
-		                                  (img->palette[3*(unsigned)img->data[i]+2])<<2,
-		                                  newpalimg->palette);
+		img->data[i] = flash_closestcolor8(img->palette[3*(unsigned)img->data[i]+0],
+		                                   img->palette[3*(unsigned)img->data[i]+1],
+		                                   img->palette[3*(unsigned)img->data[i]+2],
+		                                   newpalimg->palette);
 	}
 
 	fp = fopen(argv[1], "r+b");
@@ -82,9 +82,9 @@ int main(int argc, char **argv)
 	fseek(fp, -768, SEEK_END);
 
 	for(i = 0; i < 256; i++) {
-		fputc(((unsigned)newpalimg->palette[3*i+0])<<2, fp);
-		fputc(((unsigned)newpalimg->palette[3*i+1])<<2, fp);
-		fputc(((unsigned)newpalimg->palette[3*i+2])<<2, fp);
+		fputc(newpalimg->palette[3*i+0], fp);
+		fputc(newpalimg->palette[3*i+1], fp);
+		fputc(newpalimg->palette[3*i+2], fp);
 	}
 	fclose(fp);
 

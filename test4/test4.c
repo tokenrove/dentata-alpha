@@ -16,7 +16,7 @@
 
 #define SCRW 320
 #define SCRH 200
-#define FRAMESPERSECOND 24
+#define FRAMESPERSECOND 72
 #define FLOORY 180
 #define VXMAX 4
 #define VXACCEL 1
@@ -92,10 +92,9 @@ void titlescreen(void)
 
 	heat_flatfadeout(1, 1);
 	titlebg = flash_loadpcx("titlebg.pcx");
-	gd.titlefont = crash_loadrawfont("slant.f14", 8, 14,
-	                                 flash_closestcolor(255, 255, 255,
-	                                                    titlebg->palette));
 	heat_flatfadein(titlebg, FRAMESPERSECOND, FADETIME);
+	gd.titlefont = crash_loadrawfont("slant.f14", 8, 14,
+	                                 flash_closestcolor(255, 255, 255));
 	gd.p1collide = rectangle;
 	gd.p2collide = rectangle;
 	gd.dosnow = 0;
@@ -145,7 +144,7 @@ void optionscreen(struct gamedata_s *gd)
 {
 	void *qh, *sh;
 	flash_image_t *bg;
-	int pos, i;
+	int pos;
 
 	pos = 0;
 	bg = flash_loadpcx("options.pcx");

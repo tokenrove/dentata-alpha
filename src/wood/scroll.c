@@ -34,7 +34,7 @@ void wood_addspritetofg(flash_image_t *, int);
 void wood_addtilemaptofg(wood_tilemap_t *, int);
 void wood_updatebg(void);
 void wood_updatefg(void);
-int wood_iswalkablerect(int,int,int,int);
+char wood_tiletype(int, int, int);
 
 int wood_pan(int x, int y)
 {
@@ -321,39 +321,20 @@ void wood_updatefg(void)
 	}
 }
 
-char wood_tiletype(int x, int y)
+char wood_tiletype(int x, int y, int plane)
 {
 	int i;
 	wood_tilemap_t *p;
 
-	for(i = 0; i < bgstack.nlayers; i++)
-		if(bgstack.layerstm[i] != NULL) {
-			p = bgstack.layerstm[i];
-			return p->map[(x+wood_camera_x)/p->tilew +
-			              ((y+wood_camera_y)/p->tileh)*p->width];
-		}
-	return 0;
-}
-
-#define max(x, y) (((x) < (y)) ? (y) : (x))
-
-int wood_iswalkablerect(int x, int y, int w, int h)
-{
-	int i, j, k;
-
-
-	for(i = max(0, y); i < y+h && y < wood_bound_h; i++)
-		for(j = max(0, x); j < x+w && j < wood_bound_w; j++) {
-			for(k = 0; k < bgstack.nlayers; k++)
-/*				if(bgstack.layerstm[k] &&
-				   bgstack.layerstm[k]->map[j/bgstack.layerstm[k]->tilew+(y/bgstack.layerstm[k]->tileh)*bgstack.layerstm[k]->width] >= bgstack.layerstm[k]->walkthresh)
-					return 0; */
-				if(bgstack.layerstm[k]) {
-				   if(bgstack.layerstm[k]->map[j/bgstack.layerstm[k]->tilew+((y+bgstack.layerstm[k]->tileh-1)/bgstack.layerstm[k]->tileh)*bgstack.layerstm[k]->width] >= bgstack.layerstm[k]->walkthresh)
-					return 0;
-				}
-		}
-	return 1;
+	if(plane == -1) {
+		for(i = 0; i < bgstack.nlayers; i++)
+			if(bgstack.layerstm[i] != NULL) {
+				p = bgstack.layerstm[i];
+				break;
+			}
+	} else
+		p = bgstack.layerstm[plane];
+	return p->map[x/p->tilew+(y/p->tileh)*p->width];
 }
 
 /* EOF scroll.c */

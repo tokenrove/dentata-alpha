@@ -17,6 +17,10 @@ extern void *heat_snowinit(int);
 extern void heat_snowupdate(void *);
 extern void heat_snowclose(void *);
 
+extern void *heat_foginit(void);
+extern void heat_fogupdate(void *);
+extern void heat_fogclose(void *);
+
 extern void heat_flatfadein(flash_image_t *, int, int);
 extern void heat_flatfadeout(int, int);
 extern void heat_flatfadescrimg(flash_image_t *, int, int);

@@ -73,8 +73,8 @@ void heat_dialog(crash_font_t *font, char *s, int x, int y, int w, int h)
 		qh = quick_start(FRAMESPERSECOND);
 
 		heat_box(x, y, w, h, flat,
-		         flash_closestcolor(255,255,255,air_getpalette()),
-		         flash_closestcolor(0,0,255,air_getpalette()));
+		         flash_closestcolor(255,255,255),
+		         flash_closestcolor(0,0,255));
 		q = s; i = 0;
 		while(i < pos && q != NULL) {
 			q = strchr(q, '\n');
@@ -136,8 +136,8 @@ int heat_menu(crash_font_t *font, int menulen, char **menu)
 		qh = quick_start(FRAMESPERSECOND);
 
 		heat_box(100-font->width-1, 40-1, w, h, flat,
-		         flash_closestcolor(255,255,255,air_getpalette()),
-		         flash_closestcolor(0,0,255,air_getpalette()));
+		         flash_closestcolor(255,255,255),
+		         flash_closestcolor(0,0,255));
 		for(i = 0; i < menulen; i++) {
 			crash_printf(100, 40+(font->height+1)*i+1, font, "%s", menu[i]);
 		}

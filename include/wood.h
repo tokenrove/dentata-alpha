@@ -28,10 +28,9 @@ extern void wood_addspritetofg(flash_image_t *, int);
 extern void wood_addtilemaptofg(wood_tilemap_t *, int);
 extern void wood_updatebg(void);
 extern void wood_updatefg(void);
-extern int wood_iswalkablerect(int, int, int, int);
 extern wood_tilemap_t *wood_loadtilemap(char *);
 extern void wood_delete(wood_tilemap_t *);
-extern char wood_tiletype(int, int);
+extern char wood_tiletype(int, int, int);
 
 #endif
 

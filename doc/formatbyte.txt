@@ -2,5 +2,6 @@
 Format byte values:
  0 -> PNM
  1 -> PCX
+ 2 -> TGA
 ...
 

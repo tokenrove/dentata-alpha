@@ -29,9 +29,14 @@ flash_image_t *flash_imgnew(int w, int h, int type)
 	else if(type&AIR_16BPP) inc = 2;
 	else if(type&AIR_24BPP) inc = 3;
 	p->data = malloc(w*h*inc);
-	p->alpha = NULL;
+	if(type&AIR_ALPHA1) {
+		p->alpha = malloc((w*h+7)/8);
+	} else if(type&AIR_ALPHA8) {
+		p->alpha = malloc(w*h);
+	} else {
+		p->alpha = NULL;
+	}
 	p->palette = NULL;
-	p->alphadepth = 0;
 	p->palettetype = 0;
 
 	return p;
@@ -60,11 +65,27 @@ flash_image_t *flash_imgdup(flash_image_t *p)
 
 void flash_imgblit(flash_image_t *dest, flash_image_t *src, int x, int y)
 {
+	if(dest->type != src->type) {
+		/* do something uncouth */
+	}
 	if(dest->type&AIR_8BPP) {
 		drwily_blit8(dest->data, dest->width, dest->height,
 		             src->data, src->width, src->height, x, y);
-	} else if(dest->type&AIR_16BPP) return;
-	else if(dest->type&AIR_24BPP) return;
+	} else if(dest->type&AIR_16BPP) {
+		if(dest->type&AIR_ALPHA1) {
+			drwily_blit16alpha1(dest->data, dest->width,
+			                    dest->height, src->data,
+			                    src->alpha, src->width,
+			                    src->height, x, y);
+		} else if(dest->type&AIR_ALPHA8) {
+			drwily_blit16alpha8(dest->data, dest->width,
+			                    dest->height, src->data,
+			                    src->alpha, src->width,
+			                    src->height, x, y);
+		} else {
+			return;
+		}
+	} else if(dest->type&AIR_24BPP) return;
 	return;
 }
 /* EOF image.c */

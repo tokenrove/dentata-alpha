@@ -1,0 +1,10 @@
+name world00.map
+baseimage world00.pcx
+walkthresh 2
+ntiles 6
+tile pcx tigrass.pcx
+tile pcx tifloor.pcx
+tile pcx titree.pcx
+tile pcx tiwall.pcx
+tile pcx tidoor.pcx
+tile pcx tiwater.pcx

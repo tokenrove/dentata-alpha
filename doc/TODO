@@ -1,15 +1,14 @@
 
 documentation
-multipage message box
-test4
 
 globally:
 	error checking, status, handling
-	optimized blits, blits for other resolutions
+	optimized blits
+	option to premultiply alphas in blits
 	fix a few minor endian nits (notably in file reading)
 
 air:
-	other modes
+	24bpp
 	x11 vanilla port
 
 flash:

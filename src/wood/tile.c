@@ -13,6 +13,7 @@ wood_tilemap_t *wood_loadtilemap(char *filename)
 	FILE *fp;
 	wood_tilemap_t *p;
 	char *q, buffer[81];
+	char form;
 	int i;
 
 	p = malloc(sizeof(wood_tilemap_t));
@@ -28,9 +29,14 @@ wood_tilemap_t *wood_loadtilemap(char *filename)
 	p->tiles = malloc(sizeof(flash_image_t *)*p->ntiles);
 	if(p->tiles == NULL) return NULL;
 	for(i = 0; i < p->ntiles; i++) {
+		form = fgetc(fp);
 		q = buffer;
 		do { *(q++) = fgetc(fp); } while(*(q-1) != 0);
-		p->tiles[i] = flash_loadpcx(buffer);
+		if(form == 0) {
+			p->tiles[i] = flash_loadpnm(buffer);
+		} else if(form == 1) {
+			p->tiles[i] = flash_loadpcx(buffer);
+		}
 		if(p->tiles[i] == NULL) return NULL;
 	}
 	p->map = malloc(p->width*p->height);

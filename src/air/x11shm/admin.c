@@ -45,6 +45,8 @@ int air_init(int w, int h, int type)
 	depth = DefaultDepthOfScreen(screen);
 	if(air_mode_type&AIR_8BPP && depth != 8)
 		return 0;
+	else if(air_mode_type&AIR_16BPP && depth != 16)
+		return 0;
 /* Open the window */
 	air_x_window = XCreateSimpleWindow(air_x_display,
 	                             RootWindowOfScreen(screen), 0, 0,
