@@ -7,3 +7,5 @@ default:
 	make -C metal
 	make -C quick
 	make -C wood
+	make -C heat
+	make -C bubble

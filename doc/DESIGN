@@ -35,10 +35,14 @@ unwritten
 		Fading
 		Starfield
 		Fire
+		Text boxes
 	Game [High-level, graphics+events combinations] (bubble)
-		Text boxes, dialog handlers/scripting
-		Map loading, display
 		Sprite-sprite collision, meta-animation
-		Loading of various other files/aggregate files (WAD style)
 
+<somewhere else>
+		Dialog handlers/scripting
+		Loading of various other files/aggregate files (WAD style)
+		Sound
+		Lighting effects
+		Physical models
 

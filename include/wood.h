@@ -14,6 +14,8 @@ typedef struct wood_tilemap_s {
 	flash_image_t **tiles;
 } wood_tilemap_t;
 
+extern int wood_camera_x, wood_camera_y;
+
 extern int wood_pan(int, int);
 extern void wood_jump(int, int);
 extern void wood_wipe(int, int, int);

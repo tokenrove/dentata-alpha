@@ -1,0 +1,21 @@
+
+A few notes about the current tilemap format:
+  - you can never have more than 255 tiles
+  - we try not to ascribe too much game-context to tiles, but the
+    walkability fu is the exception. it specifies whether sprites
+    can collide with a tile or not. the trick is that instead of
+    specifying it for each tile, we currently just assume you can
+    arrange your tiles as you please, as put all the walkable tiles
+    below the threshold number, and all the non-walkable tiles above.
+
+Format:
+
+Width
+Height
+Walkable Threshold (where do walkable tiles stop and nonwalkables begin?)
+Number of Tiles
+	<Format byte>    \ ntiles copies
+	ASCIIZ filename  /
+Map (Width*Height bytes)
+
+WRT format byte, see doc/formatbyte.txt

@@ -1,7 +1,7 @@
 
 documentation
 sprite handling
-message box code
+message box, menu code
 
 globally:
 	error checking, status, handling
@@ -41,7 +41,6 @@ wood:
 	optimization: incremental updates of layers based on pan
 	  amount (shift whole image left 1, then only draw the slack
 	  pixels)
-	sprite-playfield collision handling in images
 
 heat:
 	naive fading effects (screen to <color>, <color> to screen)
@@ -50,8 +49,7 @@ heat:
 	complex (ff-like) screen blur/fade effects
 	star field
 	limited and unlimited palette fire, optionally with alpha
+	sane handling of dialog boxes with concurrent screen movement?
 
 bubble:
-	sane handling of dialog boxes with concurrent screen movement
-	packed game data handling
 	sprite-sprite collision handlers

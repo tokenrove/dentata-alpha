@@ -18,8 +18,8 @@ typedef struct wood_stack_s {
 	int *depths;
 } wood_stack_t;
 
+int wood_camera_x, wood_camera_y;
 static int wood_w, wood_h, wood_type, wood_bound_w, wood_bound_h;
-static int wood_camera_x, wood_camera_y;
 static wood_stack_t bgstack = { 0, NULL, NULL, NULL, NULL };
 static wood_stack_t fgstack = { 0, NULL, NULL, NULL, NULL };
 

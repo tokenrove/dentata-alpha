@@ -1,5 +1,5 @@
 /*
- * Test software for foo libraries.
+ * Test software for foo libraries, uses the core 8.
  *
  * Julian Squires <tek@wiw.org> 2000
  */
@@ -14,13 +14,18 @@
 #include <metal.h>
 #include <wood.h>
 #include <crash.h>
+#include <bubble.h>
+#include <heat.h>
 
 #define FRAMESPERSECOND 24
 #define BUFLEN 81
+#define SCRW 320
+#define SCRH 200
+#define SCRTYPE AIR_8BPP
 
 struct gamedat_s {
 	crash_font_t *font;
-	flash_anim_t *hero[4], *head;
+	int hero, head;
 };
 
 void scrollie(struct gamedat_s gd);
@@ -29,52 +34,52 @@ void mainloop(struct gamedat_s gd);
 
 void mainloop(struct gamedat_s gd)
 {
-	int spdir = 0;
-	int sprx = 160, spry = 100, headx = 10, heady = 10, sprw, sprh, i;
+	int i;
 	void *qh;
+	bubble_sprite_t *hp;
 
-	sprw = gd.hero[spdir]->frames[0]->width;
-	sprh = gd.hero[spdir]->frames[0]->height;
+	hp = bubble_getspritebyhandle(gd.hero);
 
 	while(1) {
 		metal_update();
 		if(metal_ishit(METAL_K_ESCAPE))
 			break;
 		if(metal_ishit(METAL_K_LEFT)) {
-			if(wood_tiletype(sprx-1, spry) < 2 &&
-			   wood_tiletype(sprx-1, spry+sprh-1) < 2) {
-				if(sprx > 320/2) sprx--;
-				else if(wood_pan(-1, 0)&1 && sprx >= 0)
-					sprx--;
-			}
-			spdir = 2;
+			bubble_pansprite(gd.hero, -1, 0);
+			if(hp->x-wood_camera_x < SCRW/2)
+				wood_pan(-1, 0);
+			bubble_setspriteanim(gd.hero, 2);
 		}
 		if(metal_ishit(METAL_K_RIGHT)) {
-			if(wood_tiletype(sprx+sprw, spry) < 2 &&
-			   wood_tiletype(sprx+sprw, spry+sprh-1) < 2) {
-				if(sprx < 320/2) sprx++;
-				else if(wood_pan(1, 0)&1 && sprx < 320)
-					sprx++;
-			}
-			spdir = 3;
+			bubble_pansprite(gd.hero, 1, 0);
+			if(hp->x-wood_camera_x > SCRW/2)
+				wood_pan(1, 0);
+			bubble_setspriteanim(gd.hero, 3);
 		}
 		if(metal_ishit(METAL_K_UP)) {
+			bubble_pansprite(gd.hero, 0, -1);
+			if(hp->y-wood_camera_y < SCRH/2)
+				wood_pan(0, -1);
+/*
 			if(wood_tiletype(sprx, spry-1) < 2 &&
 			   wood_tiletype(sprx+sprw-1, spry-1) < 2) {
-				if(spry > 200/2) spry--;
+				if(spry > SCRH/2) spry--;
 				else if(wood_pan(0, -1)&2 && spry >= 0)
 					spry--;
-			}
-			spdir = 0;
+			} */
+			bubble_setspriteanim(gd.hero, 0);
 		}
 		if(metal_ishit(METAL_K_DOWN)) {
-			if(wood_tiletype(sprx, spry+sprh) < 2 &&
+			bubble_pansprite(gd.hero, 0, 1);
+			if(hp->y-wood_camera_y > SCRH/2)
+				wood_pan(0, 1);
+/*			if(wood_tiletype(sprx, spry+sprh) < 2 &&
 			   wood_tiletype(sprx+sprw-1, spry+sprh) < 2) {
-				if(spry < 200/2) spry++;
-				else if(wood_pan(0, 1)&2 && spry < 200)
+				if(spry < SCRH/2) spry++;
+				else if(wood_pan(0, 1)&2 && spry < SCRH)
 					spry++;
-			}
-			spdir = 1;
+			} */
+			bubble_setspriteanim(gd.hero, 1);
 		}
 		if(metal_ishit(METAL_K_ENTER)) {
 			i = actionmenu(gd);
@@ -87,9 +92,7 @@ void mainloop(struct gamedat_s gd)
 		qh = quick_start(FRAMESPERSECOND);
 
 		wood_updatebg();
-		air_blit(flash_animnextframe(gd.hero[spdir]), sprx, spry);
-		air_blit(flash_animnextframe(gd.head), headx, heady);
-		heady ^= 1;
+		bubble_updatespr();
 		wood_updatefg();
 
 		air_update();
@@ -103,7 +106,7 @@ int main(int argc, char **argv)
 	struct gamedat_s gd;
 	int i;
 
-	if(air_init(320, 200, AIR_8BPP) != 1) exit(EXIT_FAILURE);
+	if(air_init(SCRW, SCRH, SCRTYPE) != 1) exit(EXIT_FAILURE);
 
 	if(metal_init() != 1) {
 		air_close();
@@ -113,33 +116,19 @@ int main(int argc, char **argv)
 	gd.font = crash_loadrawfont("future.f14", 8, 14, 23);
 	scrollie(gd);
 	crash_delete(gd.font);
-	gd.font = crash_loadrawfont("readable.f08", 8, 8, 43);
-/*	                            flash_closestcolor(255, 255, 255,
-	                                               air_getpalette())); */
+	gd.font = crash_loadrawfont("readable.f08", 8, 8,
+	                            flash_closestcolor(255, 255, 255,
+	                                               air_getpalette()));
 
-	wood_wipe(320, 200, AIR_8BPP);
+	wood_wipe(SCRW, SCRH, AIR_8BPP);
 	wood_addtilemaptobg(wood_loadtilemap("world1-1.map"), 1);
-	for(i = 0; i < 4; i++)
-		gd.hero[i] = flash_animnew(6);
-	gd.head = flash_animnew(6);
-
-	flash_animaddframe(gd.hero[0], flash_loadpcx("spwlkb00.pcx"));
-	flash_animaddframe(gd.hero[0], flash_loadpcx("spwlkb01.pcx"));
-	flash_animaddframe(gd.hero[1], flash_loadpcx("spwlkf00.pcx"));
-	flash_animaddframe(gd.hero[1], flash_loadpcx("spwlkf01.pcx"));
-	flash_animaddframe(gd.hero[2], flash_loadpcx("spwlkl00.pcx"));
-	flash_animaddframe(gd.hero[3], flash_loadpcx("spwlkr00.pcx"));
-	flash_animaddframe(gd.hero[3], flash_loadpcx("spwlkr01.pcx"));
-
-	flash_animaddframe(gd.head, flash_loadpcx("head00.pcx"));
-	flash_animaddframe(gd.head, flash_loadpcx("head01.pcx"));
-	flash_animaddframe(gd.head, flash_loadpcx("head02.pcx"));
+	bubble_init();
+	gd.hero = bubble_addsprite(bubble_spriteload("hero.spr"), 1);
+	gd.head = bubble_addsprite(bubble_spriteload("head.spr"), 2);
 
 	mainloop(gd);
 
-	for(i = 0; i < 4; i++)
-		flash_animdelete(gd.hero[i]);
-	flash_animdelete(gd.head);
+	bubble_close();
 	wood_wipe(0, 0, 0);
 	crash_delete(gd.font);
 	metal_close();
@@ -147,10 +136,16 @@ int main(int argc, char **argv)
 	exit(EXIT_SUCCESS);
 }
 
+#define max(x, y) (((x) < (y)) ? (y) : (x))
+
 int actionmenu(struct gamedat_s gd)
 {
-	int pos = 0, x = 0;
+	int pos = 0, x = 0, w, h;
 	void *qh;
+
+	w = 4+(gd.font->width+1)*(strlen("talk to")+1);
+	w = max(w, 4+(gd.font->width+1)*(strlen("quit")+1));
+	h = 4+(gd.font->height+3)*2;
 
 	while(metal_ishit(METAL_K_ENTER)) metal_update();
 	while(1) {
@@ -164,11 +159,14 @@ int actionmenu(struct gamedat_s gd)
 
 		qh = quick_start(FRAMESPERSECOND);
 
-		crash_printf(100, 40, gd.font, "talk to");
-		crash_printf(100, 40+gd.font->height, gd.font, "quit");
+		heat_box(100-gd.font->width-1, 40-1, w, h, flat,
+		         flash_closestcolor(255,255,255,air_getpalette()),
+		         flash_closestcolor(0,0,255,air_getpalette()));
+		crash_printf(100, 40+1, gd.font, "talk to");
+		crash_printf(100, 40+gd.font->height+1, gd.font, "quit");
 		if((x/6)%2 == 0)
 			crash_printf(100-gd.font->width,
-			             40+(pos*gd.font->height),
+			             40+1+(pos*gd.font->height),
 		                     gd.font, ">");
 		x++;
 
@@ -190,7 +188,7 @@ void scrollie(struct gamedat_s gd)
 "moral support, and finally Kahless for not being here... Keep "
 "on dancing! [oh, and hit enter to go to the tiled world]";
 
-	wood_wipe(320, 200, AIR_8BPP);
+	wood_wipe(SCRW, SCRH, AIR_8BPP);
 	bganim = flash_animnew(10);
 	flash_animaddframe(bganim, flash_loadpcx("testbg00.pcx"));
 	air_setpalette(bganim->frames[0]->palette);
@@ -201,7 +199,7 @@ void scrollie(struct gamedat_s gd)
 	flash_animaddframe(bganim, flash_loadpcx("testbg02.pcx"));
 	wood_addanimtobg(bganim, 2);
 
-	sprx = 320;
+	sprx = SCRW;
 	while(1) {
 		metal_update();
 		if(metal_ishit(METAL_K_ESCAPE))
@@ -215,9 +213,10 @@ void scrollie(struct gamedat_s gd)
 		wood_updatefg();
 
 		sprx-=2;
-		if(sprx < -(signed)strlen(msg)*9) sprx = 320;
+		if(sprx < -(signed)strlen(msg)*(gd.font->width+1))
+			sprx = SCRW;
 
-		crash_printf(sprx, 200-16, gd.font, msg);
+		crash_printf(sprx, SCRH-(gd.font->height+2), gd.font, msg);
 
 		air_update();
 		quick_stop(qh);

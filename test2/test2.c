@@ -19,6 +19,8 @@
 #define NSTANDFRAMES 4
 #define NWALKFRAMES 4
 #define FRAMESPERSECOND 24
+#define SCRW 320
+#define SCRH 200
 #define BUFLEN 81
 
 struct gamedat_s {
@@ -34,7 +36,7 @@ void mainloop(struct gamedat_s gd)
 	flash_anim_t *sprite;
 
 	fps = FRAMESPERSECOND;
-	sprx = 320/2; spry = 200/2;
+	sprx = SCRW/2; spry = SCRH/2;
 	sprite = gd.spr_stand;
 
 	while(1) {
@@ -42,33 +44,33 @@ void mainloop(struct gamedat_s gd)
 		if(metal_ishit(METAL_K_ESCAPE))
 			break;
 		if(metal_ishit(METAL_K_UP)) {
-			if(spry > 200/2)
+			if(spry > SCRH/2)
 				spry--;
 			else
 				if(wood_pan(0, -1)&2)
 					if(spry >= 0) spry--;
 		}
 		if(metal_ishit(METAL_K_DOWN)) {
-			if(spry < 200/2)
+			if(spry < SCRH/2)
 				spry++;
 			else
 				if(wood_pan(0, 1)&2)
-					if(spry < 200) spry++;
+					if(spry < SCRH) spry++;
 		}
 		if(metal_ishit(METAL_K_LEFT)) {
 			sprite = gd.spr_walkleft;
-			if(sprx > 320/2)
+			if(sprx > SCRW/2)
 				sprx--;
 			else
 				if(wood_pan(-1, 0)&1)
 					if(sprx >= 0) sprx--;
 		} else if(metal_ishit(METAL_K_RIGHT)) {
 			sprite = gd.spr_walkright;
-			if(sprx < 320/2)
+			if(sprx < SCRW/2)
 				sprx++;
 			else
 				if(wood_pan(1, 0)&1)
-					if(sprx < 320) sprx++;
+					if(sprx < SCRW) sprx++;
 		} else
 			sprite = gd.spr_stand;
 
@@ -78,7 +80,7 @@ void mainloop(struct gamedat_s gd)
 		air_blit(flash_animnextframe(sprite), sprx, spry);
 		wood_updatefg();
 
-		crash_printf(sprx, 10, gd.font, "Foobar %d, %d", sprx, spry);
+		crash_printf(sprx, gd.font->height, gd.font, "Foobar %d, %d", sprx, spry);
 
 		air_update();
 		quick_stop(qh);
@@ -93,19 +95,23 @@ int main(int argc, char **argv)
 	struct gamedat_s gd;
 	int i;
 
-//	gd.font = crash_loadrawfont("readable.f08", 8, 8, 249);
-	gd.font = crash_loadrawfont("future.f14", 8, 14, 250);
-
-	if(air_init(320, 200, AIR_8BPP) != 1) exit(EXIT_FAILURE);
+	if(air_init(SCRW, SCRH, AIR_8BPP) != 1) exit(EXIT_FAILURE);
 
 	if(metal_init() != 1) {
 		air_close();
 		exit(EXIT_FAILURE);
 	}
 
-	wood_wipe(320, 200, AIR_8BPP);
+	wood_wipe(SCRW, SCRH, AIR_8BPP);
 	gd.bg = flash_loadpcx("testbg00.pcx");
 	air_setpalette(gd.bg->palette);
+
+//	gd.font = crash_loadrawfont("readable.f08", 8, 8, 249);
+	gd.font = crash_loadrawfont("future.f14", 8, 14,
+	                            flash_closestcolor(255, 255, 255,
+	                                               air_getpalette()));
+
+
 	wood_addspritetobg(gd.bg, 4);
 	wood_addtilemaptobg(wood_loadtilemap("flatwrld.map"), 1);
 	if(argc > 1 && strcmp(argv[1], "-fg") == 0)
@@ -134,13 +140,10 @@ int main(int argc, char **argv)
 
 	mainloop(gd);
 
-	fprintf(stderr, "foo\n");
-	wood_wipe(0, 0, 0);
-	fprintf(stderr, "foo\n");
+//	wood_wipe(0, 0, 0);
 	flash_animdelete(gd.spr_stand);
 	flash_animdelete(gd.spr_walkleft);
 	flash_animdelete(gd.spr_walkright);
-	fprintf(stderr, "foo\n");
 	crash_delete(gd.font);
 	metal_close();
 	air_close();

@@ -1,0 +1,14 @@
+
+all integers are short
+
+Sprite descriptor files:
+
+initx
+inity
+collidemode
+colliderect
+nanims
+        framelag                               \
+	nframes                                  \ nanims times
+		<format byte>   \ nframes times  /
+		ASCIIZ filename /              /

@@ -1,0 +1,6 @@
+
+Format byte values:
+ 0 -> PCX
+ 1 -> PNM
+...
+
