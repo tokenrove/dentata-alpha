@@ -1,0 +1,55 @@
+
+The air Library [portable interface to graphics hardware]
+
+Planned changes:
+  add translucent blit
+  support more modes, resolutions
+  add functions to get information about modes
+
+Functions:
+  air_init() - Setup a graphics mode.
+  air_close() - Shutdown a graphics mode.
+  air_update() - Synchronize the internal video buffer with the display.
+  air_setpalette() - Set the palette, if applicable.
+  air_getpalette() - Return the current palette, if applicable.
+  air_blit() - Copy an image onto the internal video buffer, taking alpha
+               into account.
+  air_vanillablit() - Copy an image onto the internal video buffer.
+
+Functions in Detail:
+  int air_init(int width, int height, int type)
+	Sets up a graphics mode with the properties specified, if
+	possible. Returns 1 on success, 0 on failure. Note that
+	modes which are type AIR_8BPP are currently the only
+	supported.
+> /* Example */
+> #include <air.h>
+...
+>	if(air_init(320, 200, AIR_8BPP) != 1) {
+>		fprintf(stderr, "Unable to set graphics mode!\n");
+>		exit(EXIT_FAILURE);
+>	}
+...
+
+  void air_close(void)
+	Shuts down the graphics system.
+
+  void air_update(void)
+	Synchronize the display with the internal video buffer.
+
+  void air_setpalette(char *palette)
+	Set the palette, if appropriate. This does not work in
+	non-8bpp modes.
+
+  char *air_getpalette(void)
+	Dumps the internal palette. May not necessarily be in sync
+	with the actual displaying palette.
+
+  void air_blit(flash_image_t *sprite, int x, int y)
+	Copies sprite onto the video memory at the specified offset. This
+	function will use transparencies if it comes to them. Clipping
+	is performed.
+
+  void air_vanillablit(flash_image_t *sprite, int x, int y)
+	Copies sprite onto the video memory at the specified offset,
+	directly. Clipping is performed.

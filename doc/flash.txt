@@ -1,0 +1,62 @@
+
+The flash Library [graphics loading, management, manipulation]
+
+Planned changes:
+  add more functions to work with palettes, colors
+  add functions to do format conversion
+  add functions to save in a given format
+  add functions to load PNG, other useful formats
+  add useful animation functions (ie animreset)
+  make all functions less dependant on 8-bit mode
+
+Functions:
+  flash_loadpnm() - Load a PNM (portable net map) image.
+  flash_loadpcx() - Load a PCX image.
+  flash_loadpalette() - Load a raw format palette. [obsolete]
+  flash_closestcolor() - Find a color in a palette close to supplied RGB
+                         values.
+  flash_imgnew() - Create a new flash_image_t.
+  flash_imgdelete() - Free up a flash_image_t.
+  flash_imgdup() - Duplicate a flash_image_t.
+  flash_imgblit() - Copy some portion of one image onto another, with
+                    alpha channel considerations.
+  flash_animnew() - Create a new flash_anim_t.
+  flash_animdelete() - Free up a flash_anim_t.
+  flash_animdup() - Duplicate an animation.
+  flash_animaddframe() - Tack a frame onto the end of an animation.
+  flash_animcurframe() - Return the current frame of an animation.
+  flash_animnextframe() - Return the current frame of an animation,
+                          moving to the next frame at the same time.
+
+
+Functions in detail:
+  flash_image_t *flash_loadpnm(char *filename)
+	Load a PNM (Portable Net Map) from the specified file,
+	creating a flash_image_t and returning it.
+
+	Returns the image on success, NULL on failure.
+
+  flash_image_t *flash_loadpcx(char *filename)
+	Load a PCX from the specified file, creating a flash_image_t
+	and returning it. Note that the palette is also loaded.
+
+	Returns the image on success, NULL on failure.
+
+  void flash_loadpalette(char *filename, flash_image_t *dest)
+	Obsolete. Loads a VGA-style raw palette from a file (256
+	8-bit RGB triplets, each component having no value higher
+	than 64).
+
+  int flash_closestcolor(int r, int g, int b, char *palette)
+	Returns the position of the color in the palette whose RGB
+	value is on average closest to those supplied.
+
+  flash_image_t *flash_imgnew(int width, int height, int type)
+	Create a new flash_image_t, with the data element allocated
+	to the appropriate size. Note that almost everything
+	currently only works with type = AIR_8BPP.
+
+	Returns the image on success, NULL on failure.
+
+  void flash_imgdelete(flash_image_t *image)
+	Free up the space used by a flash_image_t.

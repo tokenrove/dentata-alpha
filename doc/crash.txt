@@ -1,0 +1,66 @@
+
+The crash Library [load and display of (1-bit) fonts]
+
+Planned changes:
+  add more format specifiers, et cetera to _*printf
+  add support for headered fonts
+  add support for variable width fonts
+  add font metrics functions
+
+Functions:
+  crash_loadrawfont() - Create a crash_font_t from a file.
+  crash_printf() - Write text to the video buffer directly.
+  crash_sprintf() - Write text onto a sprite.
+  crash_delete() - Free up the memory used by a font.
+
+Functions in Detail:
+  crash_font_t *crash_loadrawfont(char *filename, int width, int height,
+                                  int color)
+	Load a raw format (no header) font from a file. The file should
+	contain 256 characters, each exactly height*(width/8) bytes long.
+	As a matter of fact, there is currently no support for fonts
+	which are not 8-bits wide, as there is no perceived demand, so
+	crash_loadrawfont is likely to fail silently if you provide a
+	bad width value.
+
+	The color value specifies what 8-bit color (yes, 8-bit, despite
+	it being a full int) the font will be loaded as. While it would
+	be possible to switch colors on the fly without deleting and
+	reloading the font, because of the way it is cached in memory,
+	the library does not provide any way to do this.
+
+	The crash_loadrawfont() function returns a freshly allocated
+	crash_font_t on	success, NULL on failure. Fonts created in
+	this manner must be cleaned up with crash_delete() after
+	use, to avoid memory leaks.
+
+  void crash_printf(int x, int y, crash_font_t *font, char *fmt, ...)
+	Acting similarly to printf, it blits a formatted string directly
+	to the video buffer (calling air_blit()). The crash_printf()
+	function does not currently support escaped characters, any
+	format specifiers other than %d, %s, and %c, or wordwrap.
+
+  void crash_sprintf(flash_image_t *dest, int x, int y, crash_font_t *font,
+                     char *fmt, ...)
+	As above, save that the output is written to a flash_image_t.
+
+  void crash_delete(crash_font_t *font)
+	Frees up the memory used by a font.
+
+Other details:
+> /* Example */
+> #include <crash.h>
+...
+>	crash_font_t *font;
+>	int i;
+>
+>	font = crash_loadrawfont("readable.f08", 8, 8, 15);
+>	if(font == NULL) {
+>		fprintf(stderr, "Unabled to load raw font!\n");
+>		exit(EXIT_FAILURE);
+>	}
+...
+>	for(i = 0; i < 5; i++)
+>		crash_printf(10, font->height*i+10, font, "Testing %d", i);
+...
+>	crash_delete(font);

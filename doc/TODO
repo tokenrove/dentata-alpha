@@ -1,0 +1,57 @@
+
+documentation
+sprite handling
+message box code
+
+globally:
+	error checking, status, handling
+	optimized blits, blits for other resolutions
+	fix a few minor endian nits (notably in file reading)
+
+air:
+	other modes
+	aalib port
+	x11 mitshm port
+	x11 vanilla port
+
+flash:
+	correctly track palette type information
+	better closestcolor algorithm
+	png, tiff, tga support
+	more complete pnm and pcx support
+
+metal:
+	mouse support
+	x11 port
+	more robust dos handler
+
+quick:
+	more accurate dos timer?
+	select() instead of usleep()
+
+crash:
+	deal with newlines
+	support for more complex format specifiers
+	allow bounding box support, for word wrapping
+	support multicolor fonts
+
+wood:
+	optimization: recalc of layers when pan is called, not
+	  when update is called
+	optimization: incremental updates of layers based on pan
+	  amount (shift whole image left 1, then only draw the slack
+	  pixels)
+	sprite-playfield collision handling in images
+
+heat:
+	naive fading effects (screen to <color>, <color> to screen)
+	sprite trails
+	high-alpha overlays
+	complex (ff-like) screen blur/fade effects
+	star field
+	limited and unlimited palette fire, optionally with alpha
+
+bubble:
+	sane handling of dialog boxes with concurrent screen movement
+	packed game data handling
+	sprite-sprite collision handlers

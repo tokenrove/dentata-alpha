@@ -1,0 +1,44 @@
+
+Decisions:
+ - Sprite-Playfield collisions are dumb
+	That is, they will do nothing more than ``hit/nohit'' and
+	tiletype. If you want the ability to detect more complex
+	collisions in an image instead of a tilemap, use invisible
+	sprites and Sprite-Sprite collision.
+
+Core Components
+	Main loop
+	Enemy AI
+Libraries
+written
+	Low Level Graphics (air)
+		Mode changing
+		Low-level blit
+	Image Handling (flash)
+		Loading of images
+		Format conversion
+		Sprites
+		Animations
+	Timing (quick)
+		Alarms w/callbacks?
+		Time of Day?
+		Timers (elapsed time)
+		Frame counters
+	Event (metal)
+		Administrative
+		Keyboard
+	Font handling (crash)
+	Scrolling and Tiling (wood)
+		Sprite-Playfield collision
+unwritten
+	Effects (heat)
+		Fading
+		Starfield
+		Fire
+	Game [High-level, graphics+events combinations] (bubble)
+		Text boxes, dialog handlers/scripting
+		Map loading, display
+		Sprite-sprite collision, meta-animation
+		Loading of various other files/aggregate files (WAD style)
+
+
