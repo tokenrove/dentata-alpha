@@ -44,14 +44,20 @@ struct gamedata_s {
 	bubble_sprite_t *pl1;
 	struct playerdata_s pl1sup;
 	int pl1handle;
+	bubble_collidemode_t p1collide;
 
 	bubble_sprite_t *pl2;
 	struct playerdata_s pl2sup;
 	int pl2handle;
+	bubble_collidemode_t p2collide;
+
+	crash_font_t *titlefont;
+	int dosnow;
 };
 
 void titlescreen(void);
 void selectscreen(struct gamedata_s *gd);
+void optionscreen(struct gamedata_s *gd);
 void gameloop(struct gamedata_s *gd);
 void doplayerphysics(bubble_sprite_t *sp, struct playerdata_s *pldat,
                      int plhandle, int plw, int plh);
@@ -76,21 +82,20 @@ int main(int argc, char **argv)
 void titlescreen(void)
 {
 	struct gamedata_s gd;
-	flash_image_t *titlebg, *titlestart, *titlestartsel,
-	              *titlequit, *titlequitsel;
+	flash_image_t *titlebg;
+	int menulen = 3;
+	char *menu[] = { "Start", "Options", "Quit" };
 	void *qh;
-	int pos;
+	int pos, i;
 
-	wood_wipe(SCRW, SCRH, AIR_8BPP);
 	titlebg = flash_loadpcx("titlebg.pcx");
-	titlestart = flash_loadpcx("titlest0.pcx");
-	titlestartsel = flash_loadpcx("titlest1.pcx");
-//	titleopt = flash_loadpcx("titleop0.pcx");
-//	titleoptsel = flash_loadpcx("titleop1.pcx");
-	titlequit = flash_loadpcx("titleqt0.pcx");
-	titlequitsel = flash_loadpcx("titleqt1.pcx");
-
+	gd.titlefont = crash_loadrawfont("slant.f14", 8, 14,
+	                                 flash_closestcolor(255, 255, 255,
+	                                                    titlebg->palette));
 	air_setpalette(titlebg->palette);
+	gd.p1collide = rectangle;
+	gd.p2collide = rectangle;
+	gd.dosnow = 0;
 	pos = 0;
 	while(1) {
 		metal_update();
@@ -102,37 +107,117 @@ void titlescreen(void)
 			if(pos == 0) { /* start */
 				selectscreen(&gd);
 			} else if(pos == 1) { /* options */
-				break;
+				optionscreen(&gd);
 			} else if(pos == 2) { /* exit */
 				break;
 			}
 		}
 		if(metal_ishit(METAL_K_DOWN)) {
+			while(metal_ishit(METAL_K_DOWN)) metal_update();
 			if(pos < 2) pos++;
 		}
 		if(metal_ishit(METAL_K_UP)) {
+			while(metal_ishit(METAL_K_DOWN)) metal_update();
 			if(pos > 0) pos--;
 		}
 
 		qh = quick_start(FRAMESPERSECOND);
 		air_vanillablit(titlebg, 0, 0);
-		if(pos != 0)
-			air_blit(titlestart, 20, 130);
-		else
-			air_blit(titlestartsel, 20, 130);
-//		if(pos != 1)
-//			air_blit(titleopt, 20, 130+titlestart->height+5);
-//		else
-//			air_blit(titleoptsel, 20, 130+titlestart->height+5);
-		if(pos != 2)
-			air_blit(titlequit, 20, 130+2*titlestart->height+10);
-		else
-			air_blit(titlequitsel, 20, 130+2*titlestart->height+10);
+		for(i = 0; i < menulen; i++)
+			crash_printf(30, 100+i*(gd.titlefont->height+1),
+			             gd.titlefont, "%s", menu[i]);
+		crash_printf(30-2-gd.titlefont->width,
+		             100+pos*(gd.titlefont->height+1), gd.titlefont,
+		             "\x10");
 		air_update();
 		quick_stop(qh);
 	}
 
-	wood_wipe(0, 0, 0);
+	crash_delete(gd.titlefont);
+	return;
+}
+
+void optionscreen(struct gamedata_s *gd)
+{
+	void *qh, *sh;
+	flash_image_t *bg;
+	int pos, i;
+
+	pos = 0;
+	bg = flash_loadpcx("options.pcx");
+	sh = heat_snowinit(32);
+	while(1) {
+		metal_update();
+		if(metal_ishit(METAL_K_ESCAPE))
+			break;
+		if(metal_ishit(METAL_K_ENTER)) {
+			while(metal_ishit(METAL_K_ENTER)) metal_update();
+
+			if(pos == 0) { /* P1 collide */
+				if(gd->p1collide == none)
+					gd->p1collide = rectangle;
+				else if(gd->p1collide == rectangle)
+					gd->p1collide = pixel;
+				else if(gd->p1collide == pixel)
+					gd->p1collide = alphathreshold;
+				else
+					gd->p1collide = none;
+
+			} else if(pos == 1) { /* P2 collide */
+				if(gd->p2collide == none)
+					gd->p2collide = rectangle;
+				else if(gd->p2collide == rectangle)
+					gd->p2collide = pixel;
+				else if(gd->p2collide == pixel)
+					gd->p2collide = alphathreshold;
+				else
+					gd->p2collide = none;
+
+			} else if(pos == 2) { /* snow */
+				gd->dosnow ^= 1;
+
+			} else if(pos == 3) { /* exit */
+				break;
+			}
+		}
+		if(metal_ishit(METAL_K_DOWN)) {
+			while(metal_ishit(METAL_K_DOWN)) metal_update();
+			if(pos < 3) pos++;
+		}
+		if(metal_ishit(METAL_K_UP)) {
+			while(metal_ishit(METAL_K_DOWN)) metal_update();
+			if(pos > 0) pos--;
+		}
+
+		qh = quick_start(FRAMESPERSECOND);
+		air_vanillablit(bg, 0, 0);
+		heat_snowupdate(sh);
+		crash_printf(30, 100+0*(gd->titlefont->height+1),
+		             gd->titlefont, "Player 1 collide: %s",
+		             (gd->p1collide == none)?"none":
+		             (gd->p1collide == rectangle)?"rectangle":
+		             (gd->p1collide == pixel)?"pixel":
+		             "alphathreshold");
+		crash_printf(30, 100+1*(gd->titlefont->height+1),
+		             gd->titlefont, "Player 2 collide: %s",
+		             (gd->p2collide == none)?"none":
+		             (gd->p2collide == rectangle)?"rectangle":
+		             (gd->p2collide == pixel)?"pixel":
+		             "alphathreshold");
+		crash_printf(30, 100+2*(gd->titlefont->height+1),
+		             gd->titlefont, "In-stage snow: %s",
+		             gd->dosnow?"on":"off");
+		crash_printf(30, 100+3*(gd->titlefont->height+1),
+		             gd->titlefont, "Back to title screen");
+		crash_printf(30-2-gd->titlefont->width,
+		             100+pos*(gd->titlefont->height+1), gd->titlefont,
+		             "\x10");
+
+		air_update();
+		quick_stop(qh);
+	}
+	flash_imgdelete(bg);
+	heat_snowclose(sh);
 	return;
 }
 
@@ -192,7 +277,6 @@ void selectscreen(struct gamedata_s *gd)
 		air_update();
 		quick_stop(qh);
 	}
-//	printf("\n\t\tdone.\n");
 
 	flash_imgdelete(selectbg);
 	for(i = 0; i < chrlen; i++) {
@@ -206,7 +290,7 @@ void selectscreen(struct gamedata_s *gd)
 
 void gameloop(struct gamedata_s *gd)
 {
-	void *qh;
+	void *qh, *sh;
 	int pl1w, pl1h, pl2w, pl2h;
 
 	bubble_init();
@@ -223,6 +307,7 @@ void gameloop(struct gamedata_s *gd)
 	gd->pl1sup.vy = 0;
 	gd->pl1sup.face = 0;
 	gd->pl1sup.duck = 0;
+	gd->pl1->collidemode = gd->p1collide;
 	bubble_setspriteanim(gd->pl1handle, ANIMWALKFR);
 
 	pl2w = gd->pl2->anims[gd->pl2->curanim]->frames[gd->pl2->anims[gd->pl2->curanim]->curframe/gd->pl2->anims[gd->pl2->curanim]->framelag]->width;
@@ -233,13 +318,16 @@ void gameloop(struct gamedata_s *gd)
 	gd->pl2sup.vy = 0;
 	gd->pl2sup.face = 1;
 	gd->pl2sup.duck = 0;
+	gd->pl2->collidemode = gd->p2collide;
 	bubble_setspriteanim(gd->pl2handle, ANIMWALKFL);
 
+	if(gd->dosnow) sh = heat_snowinit(128);
+
 	while(1) {
-//	pl2w = gd->pl2->anims[gd->pl2->curanim]->frames[gd->pl2->anims[gd->pl2->curanim]->curframe/gd->pl2->anims[gd->pl2->curanim]->framelag]->width;
-//	pl2h = gd->pl2->anims[gd->pl2->curanim]->frames[gd->pl2->anims[gd->pl2->curanim]->curframe/gd->pl2->anims[gd->pl2->curanim]->framelag]->height;
-//	pl1w = gd->pl1->anims[gd->pl1->curanim]->frames[gd->pl1->anims[gd->pl1->curanim]->curframe/gd->pl1->anims[gd->pl1->curanim]->framelag]->width;
-//	pl1h = gd->pl1->anims[gd->pl1->curanim]->frames[gd->pl1->anims[gd->pl1->curanim]->curframe/gd->pl1->anims[gd->pl1->curanim]->framelag]->height;
+	pl2w = gd->pl2->anims[gd->pl2->curanim]->frames[gd->pl2->anims[gd->pl2->curanim]->curframe/gd->pl2->anims[gd->pl2->curanim]->framelag]->width;
+	pl2h = gd->pl2->anims[gd->pl2->curanim]->frames[gd->pl2->anims[gd->pl2->curanim]->curframe/gd->pl2->anims[gd->pl2->curanim]->framelag]->height;
+	pl1w = gd->pl1->anims[gd->pl1->curanim]->frames[gd->pl1->anims[gd->pl1->curanim]->curframe/gd->pl1->anims[gd->pl1->curanim]->framelag]->width;
+	pl1h = gd->pl1->anims[gd->pl1->curanim]->frames[gd->pl1->anims[gd->pl1->curanim]->curframe/gd->pl1->anims[gd->pl1->curanim]->framelag]->height;
 
 		metal_update();
 		gd->pl1->animate = 0;
@@ -322,17 +410,18 @@ void gameloop(struct gamedata_s *gd)
 			wood_pan(0, 1);
 
 		wood_updatebg();
+		if(gd->dosnow) heat_snowupdate(sh);
 		bubble_updatespr();
 		wood_updatefg();
 
 		air_update();
 		quick_stop(qh);
 	}
-//	printf("done.\n");
+
+	if(gd->dosnow) heat_snowclose(sh);
 
 	bubble_close();
 	wood_wipe(0, 0, 0);
-//	printf("\t\t\tdone.\n");
 	return;
 }
 

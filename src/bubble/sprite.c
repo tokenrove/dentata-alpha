@@ -121,9 +121,9 @@ int bubble_checkspritespritecollide(bubble_sprite_t *a, bubble_sprite_t *b)
 				    j < a->x+a->colliderect.x+a->colliderect.w;
 				    j++) {
 					if(j >= b->x+b->colliderect.x &&
-					   j <= b->x+b->colliderect.x+b->colliderect.w &&
+					   j < b->x+b->colliderect.x+b->colliderect.w &&
 					   i >= b->y+b->colliderect.y &&
-					   i <= b->y+b->colliderect.y+b->colliderect.h)
+					   i < b->y+b->colliderect.y+b->colliderect.h)
 						return 1;
 				}
 			}
@@ -136,10 +136,10 @@ p = b->anims[b->curanim]->frames[b->anims[b->curanim]->curframe/b->anims[b->cura
 				for(j = a->x+a->colliderect.x;
 				    j < a->x+a->colliderect.x+a->colliderect.w;
 				    j++) {
-					if(j >= b->x+b->colliderect.x &&
-					   j <= b->x+b->colliderect.x+b->colliderect.w &&
-					   i >= b->y+b->colliderect.y &&
-					   i <= b->y+b->colliderect.y+b->colliderect.h &&
+					if(j >= b->x &&
+					   j < b->x+p->width &&
+					   i >= b->y &&
+					   i < b->y+p->height &&
 				           p->data[(j-b->x)+(i-b->y)*p->width] != 0)
 						return 1;
 				}
@@ -152,18 +152,18 @@ p = b->anims[b->curanim]->frames[b->anims[b->curanim]->curframe/b->anims[b->cura
 		case pixel:
 p = a->anims[a->curanim]->frames[a->anims[a->curanim]->curframe/a->anims[a->curanim]->framelag];
 q = b->anims[b->curanim]->frames[b->anims[b->curanim]->curframe/b->anims[b->curanim]->framelag];
-			for(i = a->y+a->colliderect.y;
-			    i < a->y+a->colliderect.y+a->colliderect.h;
+			for(i = a->y;
+			    i < a->y+p->height;
 			    i++) {
-				for(j = a->x+a->colliderect.x;
-				    j < a->x+a->colliderect.x+a->colliderect.w;
+				for(j = a->x;
+				    j < a->x+p->width;
 				    j++) {
-					if(j >= b->x+b->colliderect.x &&
-					   j <= b->x+b->colliderect.x+b->colliderect.w &&
-					   i >= b->y+b->colliderect.y &&
-					   i <= b->y+b->colliderect.y+b->colliderect.h &&
-					   p->data[(i-a->x)+(j-a->y)*p->width] != 0 &&
-				           q->data[(i-b->x)+(j-b->y)*q->width] != 0)
+					if(j >= b->x &&
+					   j < b->x+q->width &&
+					   i >= b->y &&
+					   i < b->y+q->height &&
+					   p->data[(j-a->x)+(i-a->y)*p->width] != 0 &&
+				           q->data[(j-b->x)+(i-b->y)*q->width] != 0)
 						return 1;
 				}
 			}
