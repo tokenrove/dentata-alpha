@@ -10,7 +10,6 @@ globally:
 
 air:
 	other modes
-	aalib port
 	x11 vanilla port
 
 flash:
@@ -54,4 +53,5 @@ heat:
 	optimization: shared effects buffer
 
 bubble:
-	sprite-sprite collision handlers using ranges to avoid wasting time with many sprites
+	sprite-sprite collision handlers using ranges to avoid wasting
+	  time with many sprites (see Graphics Gems, 

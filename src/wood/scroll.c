@@ -19,7 +19,8 @@ typedef struct wood_stack_s {
 } wood_stack_t;
 
 int wood_camera_x, wood_camera_y;
-static int wood_w, wood_h, wood_type, wood_bound_w, wood_bound_h;
+int wood_bound_w, wood_bound_h;
+static int wood_w, wood_h, wood_type;
 static wood_stack_t bgstack = { 0, NULL, NULL, NULL, NULL };
 static wood_stack_t fgstack = { 0, NULL, NULL, NULL, NULL };
 
@@ -135,6 +136,7 @@ void wood_addspritetobg(flash_image_t *p, int depth)
 
 	i = wood_addlayer(&bgstack, depth);
 	bgstack.layersim[i] = p;
+	bgstack.layersam[i] = NULL;
 	bgstack.layerstm[i] = NULL;
 	bgstack.depths[i] = depth;
 

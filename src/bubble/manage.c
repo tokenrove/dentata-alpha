@@ -91,7 +91,8 @@ void bubble_updatespr(void)
 	for(i = 0; i < sprstack.nsprites; i++) {
 		p = sprstack.sprites[i];
 		if(p == NULL) continue;
-		air_blit(flash_animnextframe(p->anims[p->curanim]),
+		air_blit((p->animate)?
+		         flash_animnextframe(p->anims[p->curanim]):flash_animcurframe(p->anims[p->curanim]),
 		         p->x-wood_camera_x, p->y-wood_camera_y);
 	}
 	return;

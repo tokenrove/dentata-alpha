@@ -16,6 +16,7 @@ typedef struct wood_tilemap_s {
 } wood_tilemap_t;
 
 extern int wood_camera_x, wood_camera_y;
+extern int wood_bound_w, wood_bound_h;
 
 extern int wood_pan(int, int);
 extern void wood_jump(int, int);

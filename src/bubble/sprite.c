@@ -97,6 +97,41 @@ bubble_sprite_t *bubble_spritedup(bubble_sprite_t *p)
 	return q;
 }
 
+int bubble_checkspritespritecollide(bubble_sprite_t *a, bubble_sprite_t *b)
+{
+	int i, j;
+
+	switch(a->collidemode) {
+	case rectangle:
+		switch(b->collidemode) {
+		case rectangle:
+			for(i = a->y+a->colliderect.y;
+			    i < a->y+a->colliderect.y+a->colliderect.h;
+			    i++) {
+				for(j = a->x+a->colliderect.x;
+				    j < a->x+a->colliderect.x+a->colliderect.w;
+				    j++) {
+					if(j >= b->x+b->colliderect.x &&
+					   j <= b->x+b->colliderect.x+b->colliderect.w &&
+					   i >= b->y+b->colliderect.y &&
+					   i <= b->y+b->colliderect.y+b->colliderect.h)
+						return 1;
+				}
+			}
+			break;
+		case pixel:
+		case none:
+		default:
+			break;
+		}
+	case pixel:
+	case none:
+	default:
+		break;
+	}
+	return 0;
+}
+
 int bubble_spritegencolliderect(bubble_sprite_t *p)
 {
 	bubble_rect_t r;

@@ -16,7 +16,7 @@ typedef struct bubble_rect_s {
 typedef struct bubble_sprite_s {
 	int x, y;
 	bubble_collidemode_t collidemode;
-	int curanim, nanims;
+	int curanim, nanims, animate;
 	flash_anim_t **anims;
 	bubble_rect_t colliderect;
 } bubble_sprite_t;

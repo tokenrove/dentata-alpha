@@ -12,7 +12,6 @@
 char *air_vbuf, *air_palette;
 int air_mode_w, air_mode_h, air_mode_type;
 struct aa_context *air_context;
-static aa_renderparams air_rendparam;
 static aa_palette air_aa_palette;
 
 int air_init(int w, int h, int type)
@@ -36,13 +35,6 @@ int air_init(int w, int h, int type)
 			}
 		}
 	}
-
-	air_rendparam.bright = 255;
-	air_rendparam.contrast = 127;
-	air_rendparam.gamma = 0.0;
-	air_rendparam.dither = AA_FLOYD_S;
-	air_rendparam.inversion = 0;
-	air_rendparam.randomval = 0;
 
 	return 0;
 }
@@ -72,12 +64,12 @@ void air_update(void)
 		memcpy(aa_image(air_context)+aa_imgwidth(air_context)*i, p,
 		       min(aa_imgwidth(air_context),air_mode_w));
 
-//	aa_renderpalette(air_context, air_aa_palette, &air_rendparam,
-//	                 0, 0, aa_scrwidth(air_context),
-//	                 aa_scrheight(air_context));
-	aa_fastrender(air_context,
+	aa_renderpalette(air_context, air_aa_palette, &aa_defrenderparams,
 	                 0, 0, aa_scrwidth(air_context),
 	                 aa_scrheight(air_context));
+//	aa_fastrender(air_context,
+//	                 0, 0, aa_scrwidth(air_context),
+//	                 aa_scrheight(air_context));
 	aa_flush(air_context);
 }
 

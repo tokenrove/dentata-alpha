@@ -22,6 +22,7 @@ tests: libs
 	make -C test1
 	make -C test2
 	make -C test3
+	make -C test4
 
 clean:
 	rm -f `find . -name "*~"` `find . -name "*.o"`
@@ -31,3 +32,4 @@ realclean: clean
 	make -C test1 clean
 	make -C test2 clean
 	make -C test3 clean
+	make -C test4 clean

@@ -112,7 +112,7 @@ int main(int argc, char **argv)
 	                                               air_getpalette()));
 
 
-	wood_addspritetobg(gd.bg, 4);
+	wood_addspritetobg(gd.bg, 2);
 	wood_addtilemaptobg(wood_loadtilemap("flatwrld.map"), 1);
 	if(argc > 1 && strcmp(argv[1], "-fg") == 0)
 		wood_addspritetofg(flash_loadpcx("testbg02.pcx"), 2);
