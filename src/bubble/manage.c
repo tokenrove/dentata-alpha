@@ -6,6 +6,7 @@
 #include <wood.h>
 #include <air.h>
 #include <stdlib.h>
+#include <math.h>
 
 int bubble_init(void);
 int bubble_addsprite(bubble_sprite_t *, int);
@@ -16,6 +17,7 @@ void bubble_setspriteanim(int, int);
 bubble_sprite_t *bubble_getspritebyhandle(int);
 void bubble_updatespr(void);
 void bubble_close(void);
+int bubble_checkraycollide(int, int, float, int, int, int *);
 
 typedef struct bubble_stack_s {
 	int nsprites;
@@ -93,6 +95,37 @@ void bubble_updatespr(void)
 		         p->x-wood_camera_x, p->y-wood_camera_y);
 	}
 	return;
+}
+
+int bubble_checkraycollide(int x, int y, float theta, int radius,
+	                   int nignore, int *ignore)
+{
+	float dx = 0, dy = 0;
+	int i, j;
+
+	while(radius-- > 0) {
+		dx += cos(theta);
+		if(dx > 1) { x++; dx -= 1; }
+		else if(dx < -1) { x--; dx += 1; }
+		dy += sin(theta);
+		if(dy > 1) { y++; dy -= 1; }
+		else if(dy < -1) { y--; dy += 1; }
+
+		for(i = 0; i < sprstack.nsprites; i++) {
+			for(j = 0; j < nignore; j++)
+				if(i == ignore[j])
+					break;
+			if(j < nignore) continue;
+
+			if(x >= sprstack.sprites[i]->x &&
+			   x <= sprstack.sprites[i]->x+sprstack.sprites[i]->colliderect.w &&
+			   y >= sprstack.sprites[i]->y &&
+			   y <= sprstack.sprites[i]->y+sprstack.sprites[i]->colliderect.h)
+				return i;
+		}
+	}
+
+	return -1;
 }
 
 /* EOF manage.c */

@@ -30,6 +30,7 @@ extern void bubble_setspriteanim(int, int);
 extern bubble_sprite_t *bubble_getspritebyhandle(int);
 extern void bubble_updatespr(void);
 extern void bubble_close(void);
+extern int bubble_checkraycollide(int, int, float, int, int, int *);
 
 extern bubble_sprite_t *bubble_spriteload(char *);
 extern bubble_sprite_t *bubble_spritenew(void);

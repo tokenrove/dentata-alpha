@@ -1,8 +1,8 @@
 # Linux:
-LIBS=-lvga
+LIBS=-lvga -lm
 OUT=test3
 # DOS:
-#LIBS=
+#LIBS=-lm
 #OUT=test3.exe
 
 default:

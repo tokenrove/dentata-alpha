@@ -1,6 +1,5 @@
 
 documentation
-sprite handling
 message box, menu code
 
 globally:
@@ -52,4 +51,4 @@ heat:
 	sane handling of dialog boxes with concurrent screen movement?
 
 bubble:
-	sprite-sprite collision handlers
+	sprite-sprite collision handlers using ranges to avoid wasting time with many sprites

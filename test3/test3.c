@@ -34,9 +34,12 @@ void mainloop(struct gamedat_s gd);
 
 void mainloop(struct gamedat_s gd)
 {
-	int i;
+	int i, nignore = 1, ignore[1];
+	float theta;
 	void *qh;
 	bubble_sprite_t *hp;
+
+	ignore[0] = gd.hero;
 
 	hp = bubble_getspritebyhandle(gd.head);
 	bubble_spritegencolliderect(hp);
@@ -56,6 +59,7 @@ void mainloop(struct gamedat_s gd)
 					wood_pan(-1, 0);
 			}
 			bubble_setspriteanim(gd.hero, 2);
+			theta = M_PI;
 		}
 		if(metal_ishit(METAL_K_RIGHT)) {
 			if(wood_iswalkablerect(hp->x+1, hp->y,
@@ -66,6 +70,7 @@ void mainloop(struct gamedat_s gd)
 					wood_pan(1, 0);
 			}
 			bubble_setspriteanim(gd.hero, 3);
+			theta = 0;
 		}
 		if(metal_ishit(METAL_K_UP)) {
 			if(wood_iswalkablerect(hp->x, hp->y-1,
@@ -76,6 +81,7 @@ void mainloop(struct gamedat_s gd)
 					wood_pan(0, -1);
 			}
 			bubble_setspriteanim(gd.hero, 0);
+			theta = M_PI/2;
 		}
 		if(metal_ishit(METAL_K_DOWN)) {
 			if(wood_iswalkablerect(hp->x, hp->y+1,
@@ -86,10 +92,20 @@ void mainloop(struct gamedat_s gd)
 					wood_pan(0, 1);
 			}
 			bubble_setspriteanim(gd.hero, 1);
+			theta = (3*M_PI)/2;
 		}
 		if(metal_ishit(METAL_K_ENTER)) {
 			i = actionmenu(gd);
 			if(i == 0) { /* talk to */
+				i = bubble_checkraycollide(hp->x, hp->y,
+				                           theta,
+				                           hp->colliderect.w,
+				                           nignore, ignore);
+				if(i == -1) {
+					heat_dialog(gd.font,"Who are you talking to?");
+				} else if(i == gd.head) {
+					heat_dialog(gd.font,"[HEAD]\nMugu mugu.");
+				}
 			} else if(i == 1) { /* quit */
 				break;
 			}
