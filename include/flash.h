@@ -15,7 +15,7 @@ typedef struct flash_image_s {
 
 	char *data;
 	char *alpha;
-	char *palette;
+	unsigned char *palette;
 } flash_image_t;
 
 typedef struct flash_anim_s {
@@ -26,7 +26,7 @@ typedef struct flash_anim_s {
 extern flash_image_t *flash_loadpnm(char *);
 extern flash_image_t *flash_loadpcx(char *);
 extern void flash_loadpalette(char *, flash_image_t *);
-extern int flash_closestcolor(int r, int g, int b, char *palette);
+extern int flash_closestcolor(int, int, int, unsigned char *);
 extern flash_image_t *flash_imgnew(int, int, int);
 extern void flash_imgdelete(flash_image_t *);
 extern flash_image_t *flash_imgdup(flash_image_t *);
