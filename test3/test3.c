@@ -185,16 +185,24 @@ void credits(struct gamedat_s gd)
 {
 	void *qh, *sh;
 	int pos = SCRH;
-	int msglen = 17;
+	int msglen = 23;
 	char *msg[] = { "Programming", "Tek", "",
-                        "Concept", "Square and a thousand others",
-	                "", "Thanks", "Retsyn", "Astfgl", "Dum2007",
-	                "Obliviax", "Fract", "", "",
-	                "No floating samurai heads were",
+                        "Concept", "Square and a thousand others", "",
+	                "NES Graphics", "Obliviax", "",
+	                "Thanks", "Retsyn", "Astfgl",
+	                "Dum2007", "unSlider", "Taliesin",
+	                "Fract", "Adoom", "",
+
+	                "", "", "No floating samurai heads were",
 	                "harmed in the production of ", "this demo" };
-	int msgemph[] = { 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+	int msgemph[] = { 1, 0, 0,
+	                  1, 0, 0,
+	                  1, 0, 0,
+	                  1, 0, 0,  0, 0, 0,  0, 0, 0,
+
+	                  0, 0, 0, 0, 0 };
 	flash_image_t *bg;
-	int i, inc, bginc;
+	int i, j, inc, bginc;
 	crash_font_t *emph;
 
 	bg = flash_loadpcx("stars.pcx");
@@ -235,8 +243,33 @@ void credits(struct gamedat_s gd)
 		quick_stop(qh);
 	}
 
+	for(j = 0; j < 1000000; j += 41666) {
+		metal_update();
+		if(metal_ishit(METAL_K_ESCAPE))
+			break;
+
+		qh = quick_start(24);
+		air_vanillablit(bg, 0, bginc);
+
+		for(i = 0, inc = 0; i < msglen; i++) {
+			if(msgemph[i]) {
+				crash_printf(SCRW/2-(strlen(msg[i])*(gd.font->width+1))/2,
+				             pos+inc,
+				             emph, msg[i]);
+				inc += emph->height+1;
+			} else {
+				crash_printf(SCRW/2-(strlen(msg[i])*(gd.font->width+1))/2,
+				             pos+inc,
+				             gd.font, msg[i]);
+				inc += gd.font->height+1;
+			}
+		}
+		heat_snowupdate(sh);
+		air_update();
+		quick_stop(qh);
+	}
+
 	heat_snowclose(sh);
-	quick_wait(1000000);
 
 	flash_imgdelete(bg);
 

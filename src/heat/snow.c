@@ -46,26 +46,28 @@ void heat_snowupdate(void *snow_)
 	memset(snow->plane->data, 0, snow->plane->width*snow->plane->height);
 
 	for(i = 0; i < snow->nactive; i++) {
+		if((float)rand()/(RAND_MAX+1.0) > 0.5) snow->flake_y[i]++;
 		snow->flake_y[i]++;
+
+		if(snow->flake_y[i] >= snow->plane->height) {
+			memmove(&snow->flake_x[i], &snow->flake_x[i+1],
+				(snow->nactive-1-i)*sizeof(int));
+			memmove(&snow->flake_y[i], &snow->flake_y[i+1],
+				(snow->nactive-1-i)*sizeof(int));
+			snow->nactive--; i--;
+			continue;
+		}
+
 		if((float)rand()/(RAND_MAX+1.0) < 0.33) snow->flake_x[i]++;
 		if((float)rand()/(RAND_MAX+1.0) < 0.33) snow->flake_x[i]--;
 
-		if(snow->flake_x[i] > snow->plane->width)
+		if(snow->flake_x[i] >= snow->plane->width)
 			snow->flake_x[i] = snow->plane->width;
 		if(snow->flake_x[i] < 0)
 			snow->flake_x[i] = 0;
 
 		snow->plane->data[snow->flake_x[i]+
 		            snow->flake_y[i]*snow->plane->width] = snow->white;
-
-		if((float)rand()/(RAND_MAX+1.0) > 0.5) snow->flake_y[i]++;
-		if(snow->flake_y[i] >= snow->plane->height) {
-			memmove(&snow->flake_x[i], &snow->flake_x[i+1],
-				(snow->nactive-1-i)*sizeof(int));
-			memmove(&snow->flake_y[i], &snow->flake_y[i+1],
-				(snow->nactive-1-i)*sizeof(int));
-			snow->nactive--;
-		}
 	}
 
 	if(snow->nactive < snow->nflakes &&
