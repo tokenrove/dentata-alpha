@@ -28,6 +28,8 @@
 #define YPANPOS 10
 #define XPUSH 5
 
+#define FADETIME 1000000
+
 #define ANIMWALKFR 0
 #define ANIMWALKFL 1
 #define ANIMJUMPFR 2
@@ -88,11 +90,12 @@ void titlescreen(void)
 	void *qh;
 	int pos, i;
 
+	heat_flatfadeout(1, 1);
 	titlebg = flash_loadpcx("titlebg.pcx");
 	gd.titlefont = crash_loadrawfont("slant.f14", 8, 14,
 	                                 flash_closestcolor(255, 255, 255,
 	                                                    titlebg->palette));
-	air_setpalette(titlebg->palette);
+	heat_flatfadein(titlebg, FRAMESPERSECOND, FADETIME);
 	gd.p1collide = rectangle;
 	gd.p2collide = rectangle;
 	gd.dosnow = 0;
@@ -106,6 +109,7 @@ void titlescreen(void)
 
 			if(pos == 0) { /* start */
 				selectscreen(&gd);
+				heat_flatfadein(titlebg, FRAMESPERSECOND, FADETIME);
 			} else if(pos == 1) { /* options */
 				optionscreen(&gd);
 			} else if(pos == 2) { /* exit */
@@ -230,7 +234,7 @@ void selectscreen(struct gamedata_s *gd)
 	flash_image_t *selectbg, **selectchr, **selectchrsel;
 
 	selectbg = flash_loadpcx("selectbg.pcx");
-	air_setpalette(selectbg->palette);
+	heat_flatfadescrimg(selectbg, FRAMESPERSECOND, FADETIME);
 	selectchr = malloc(chrlen*sizeof(flash_image_t *));
 	for(i = 0; i < chrlen; i++) {
 		sprintf(buffer, "sunchr%02d.pcx", i);
@@ -292,10 +296,13 @@ void gameloop(struct gamedata_s *gd)
 {
 	void *qh, *sh;
 	int pl1w, pl1h, pl2w, pl2h;
+	flash_image_t *bg;
 
 	bubble_init();
 	wood_wipe(SCRW, SCRH, AIR_8BPP);
-	wood_addspritetobg(flash_loadpcx("stagebg.pcx"), 1);
+	bg = flash_loadpcx("stagebg.pcx");
+	wood_addspritetobg(bg, 1);
+	heat_flatfadescrimg(bg, FRAMESPERSECOND, FADETIME);
 	gd->pl1handle = bubble_addsprite(gd->pl1, 0);
 	gd->pl2handle = bubble_addsprite(gd->pl2, 0);
 

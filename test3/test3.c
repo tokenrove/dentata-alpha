@@ -206,6 +206,7 @@ void credits(struct gamedat_s gd)
 	crash_font_t *emph;
 
 	bg = flash_loadpcx("stars.pcx");
+	heat_flatfadein(bg, FRAMESPERSECOND, 1000000);
 	emph = crash_loadrawfont("future.f14", 8, 14,
 	                         flash_closestcolor(192, 0, 0,
 	                                            air_getpalette()));
@@ -272,6 +273,7 @@ void credits(struct gamedat_s gd)
 	heat_snowclose(sh);
 
 	flash_imgdelete(bg);
+	heat_flatfadeout(FRAMESPERSECOND, 5000000);
 
 	return;
 }
