@@ -43,6 +43,8 @@ int air_init(int w, int h, int type)
 	graphcont = DefaultGCOfScreen(screen);
 	colormap = DefaultColormapOfScreen(screen);
 	depth = DefaultDepthOfScreen(screen);
+	if(air_mode_type&AIR_8BPP && depth != 8)
+		return 0;
 /* Open the window */
 	air_x_window = XCreateSimpleWindow(air_x_display,
 	                             RootWindowOfScreen(screen), 0, 0,
@@ -57,8 +59,8 @@ int air_init(int w, int h, int type)
 /* Create the XImage */
 	air_vbuf = XShmCreateImage(air_x_display,
 	                           DefaultVisualOfScreen(screen),
-	                           depth, ZPixmap, NULL, &shminfo, air_mode_w,
-	                           air_mode_h);
+	                           depth, ZPixmap, NULL, &shminfo,
+	                           air_mode_w, air_mode_h);
 	if(air_vbuf == NULL) {
 		return 0;
 	}
@@ -78,17 +80,6 @@ int air_init(int w, int h, int type)
 	if(XShmAttach(air_x_display, &shminfo) == 0) {
 		return 0;
 	}
-	for(i = j = 0; j < 256; j++) {
-		color.flags = DoRed|DoGreen|DoBlue;
-		color.red = (j<<10)&0xC000;
-		color.green = (j<<12)&0xC000;
-		color.blue = (j<<14)&0xC000;
-		if(XAllocColor(air_x_display, colormap, &color)) {
-			i++;
-/*			Xpal[j] = color.pixel; */
-		}
-	}
-	printf("Got %i colors.\n", i);
 	XMapRaised(air_x_display, air_x_window);
 	XClearWindow(air_x_display, air_x_window);
 	XFlush(air_x_display);
@@ -119,6 +110,24 @@ void air_update(void)
 
 void air_setpalette(char *palette)
 {
+	int i;
+	XColor color;
+	unsigned long foo[256], bar[1];
+	Visual visual;
+
+	visual = *DefaultVisual(air_x_display, DefaultScreen(air_x_display));
+	colormap = XCreateColormap(air_x_display, air_x_window, &visual,
+	                           AllocAll);
+	for(i = 0; i < 256; i++) {
+		color.flags = DoRed|DoGreen|DoBlue;
+		color.red = palette[3*i+0]<<10;
+		color.green = palette[3*i+1]<<10;
+		color.blue = palette[3*i+2]<<10;
+		color.pixel = i;
+		XStoreColor(air_x_display, colormap, &color);
+	}
+	XSetWindowColormap(air_x_display, air_x_window, colormap);
+	XInstallColormap(air_x_display, colormap);
 	air_palette = palette;
 	return;
 }

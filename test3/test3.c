@@ -56,7 +56,6 @@ void mainloop(struct gamedat_s gd)
 	hp = bubble_getspritebyhandle(gd.head);
 	bubble_spritegencolliderect(hp);
 	hp = bubble_getspritebyhandle(gd.hero);
-	bubble_spritegencolliderect(hp);
 
 	while(1) {
 		metal_update();
@@ -111,7 +110,7 @@ void mainloop(struct gamedat_s gd)
 			if(i == 0) { /* talk to */
 				i = bubble_checkraycollide(hp->x, hp->y,
 				                           theta,
-				                           hp->colliderect.w,
+				                           hp->colliderect.w*2,
 				                           nignore, ignore);
 				if(i == -1) {
 					heat_dialog(gd.font,"Who are you talking to?");
@@ -125,7 +124,10 @@ void mainloop(struct gamedat_s gd)
 				if(i == 0) /* status */
 					heat_dialog(gd.font,
                                                     "Don't worry about such \n"
-                                                    "things. This isn't a game!");
+                                                    "things. This isn't a game!\n"
+					            "\n"
+					            "This is, however, a test\n"
+					            "of multiline dialog.");
 				else if(i == 1) /* quit */
 					break;
 			}
@@ -181,7 +183,7 @@ int main(int argc, char **argv)
 
 void credits(struct gamedat_s gd)
 {
-	void *qh;
+	void *qh, *sh;
 	int pos = SCRH;
 	int msglen = 17;
 	char *msg[] = { "Programming", "Tek", "",
@@ -199,6 +201,7 @@ void credits(struct gamedat_s gd)
 	emph = crash_loadrawfont("future.f14", 8, 14,
 	                         flash_closestcolor(192, 0, 0,
 	                                            air_getpalette()));
+	sh = heat_snowinit(128);
 
 	inc = bginc = 0;
 	while(pos+inc > SCRH/2) {
@@ -209,8 +212,6 @@ void credits(struct gamedat_s gd)
 		qh = quick_start(24);
 
 		air_vanillablit(bg, 0, bginc);
-
-		if(bginc > -99) bginc-=2;
 
 		for(i = 0, inc = 0; i < msglen; i++) {
 			if(msgemph[i]) {
@@ -227,10 +228,14 @@ void credits(struct gamedat_s gd)
 		}
 		pos--;
 
+		if(bginc > -99) bginc-=2;
+		else heat_snowupdate(sh);
+
 		air_update();
 		quick_stop(qh);
 	}
 
+	heat_snowclose(sh);
 	quick_wait(1000000);
 
 	flash_imgdelete(bg);

@@ -1,14 +1,14 @@
-#export OUT=
+export OUT=
 # Linux SVGAlib:
-#export LIBS=-lvga -lm
-#export TARGET=svgalib
+export LIBS=-lvga -lm
+export TARGET=svgalib
 # Linux X11:
 #export LIBS=-L/usr/X11R6/lib -lXext -lX11 -lm
 #export TARGET=x11
 # DOS:
-export LIBS=
-export OUT=.exe
-export TARGET=dos
+#export LIBS=
+#export OUT=.exe
+#export TARGET=dos
 
 default: tests
 

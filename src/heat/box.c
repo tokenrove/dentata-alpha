@@ -67,6 +67,7 @@ void heat_dialog(crash_font_t *font, char *s)
 		q = p = s; i = 0;
 		while((q = strchr(q, '\n')) != NULL) {
 			q++;
+			memset(buffer, 0, 81);
 			strncpy(buffer, p, strcspn(p, "\n"));
 			crash_printf(80, 60+(font->height+1)*i+1, font, "%s", buffer);
 			p = q;

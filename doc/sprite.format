@@ -5,7 +5,7 @@ Sprite descriptor files:
 
 initx
 inity
-collidemode
+collidemode [ 0 = none, 1 = rectangle, ... ]
 colliderect
 nanims
         framelag                               \

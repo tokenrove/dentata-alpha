@@ -49,8 +49,7 @@ flash_image_t *flash_loadpcx(char *filename)
 				if(i < w*h)
 					p->data[i++] = c;
 				else
-					fprintf(stderr, "%d, remaining run of %d %02x's\n",
-					        i, run, c);
+					/* error condition */;
 		}
 	}
 

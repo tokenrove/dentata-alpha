@@ -7,7 +7,7 @@
 
 #include <flash.h>
 
-typedef enum { none, rectangle, pixel, alphathreshold } bubble_collidemode_t;
+typedef enum { none = 0, rectangle, pixel, alphathreshold } bubble_collidemode_t;
 
 typedef struct bubble_rect_s {
 	int x, y, w, h;

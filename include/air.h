@@ -12,6 +12,8 @@
 #define AIR_16BPP 2
 #define AIR_24BPP 4
 
+extern int air_mode_h, air_mode_w, air_mode_type;
+
 extern int air_init(int, int, int);
 extern void air_close(void);
 extern void air_update(void);

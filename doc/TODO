@@ -1,6 +1,8 @@
 
 documentation
 message box, menu code
+snow
+test4
 
 globally:
 	error checking, status, handling
@@ -50,7 +52,7 @@ heat:
 	limited and unlimited palette fire, optionally with alpha
 	sane handling of dialog boxes with concurrent screen movement?
 	snow
-	
+	optimization: shared effects buffer
 
 bubble:
 	sprite-sprite collision handlers using ranges to avoid wasting time with many sprites

@@ -102,6 +102,8 @@ int bubble_checkraycollide(int x, int y, float theta, int radius,
 {
 	float dx = 0, dy = 0;
 	int i, j;
+	bubble_sprite_t *sp;
+	flash_image_t *p;
 
 	while(radius-- > 0) {
 		dx += cos(theta);
@@ -117,11 +119,28 @@ int bubble_checkraycollide(int x, int y, float theta, int radius,
 					break;
 			if(j < nignore) continue;
 
-			if(x >= sprstack.sprites[i]->x &&
-			   x <= sprstack.sprites[i]->x+sprstack.sprites[i]->colliderect.w &&
-			   y >= sprstack.sprites[i]->y &&
-			   y <= sprstack.sprites[i]->y+sprstack.sprites[i]->colliderect.h)
-				return i;
+			switch(sprstack.sprites[i]->collidemode) {
+			case rectangle:
+				sp = sprstack.sprites[i];
+				if(x >= sp->x &&
+				   x <= sp->x+sp->colliderect.w &&
+				   y >= sp->y &&
+				   y <= sp->y+sp->colliderect.h)
+					return i;
+				break;
+			case pixel:
+				sp = sprstack.sprites[i];
+	p = sp->anims[sp->curanim]->frames[sp->anims[sp->curanim]->curframe/sp->anims[sp->curanim]->framelag];
+				if(x >= sp->x &&
+				   x <= sp->x+sp->colliderect.w &&
+				   y >= sp->y &&
+				   y <= sp->y+sp->colliderect.h &&
+				   p->data[(x-sp->x)+(y-sp->y)*p->width] != 0)
+					return i;
+			case none:
+			default:
+				break;
+			}
 		}
 	}
 
