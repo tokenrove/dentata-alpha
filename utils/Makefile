@@ -2,10 +2,10 @@
 CCFLAGS=-Wall -g
 CFLAGS=$(CCFLAGS) -I../include
 
-all: repalette sprcomp
+all: repal$(OUT) sprcomp$(OUT)
 
-repalette: repalette.o
-	$(CC) $(CFLAGS) repalette.o -o repalette -L../lib -lflash -ldrwily
+repal$(OUT): repal.o
+	$(CC) $(CFLAGS) repal.o -o repal$(OUT) -L../lib -lflash -ldrwily
 
-sprcomp: sprcomp.o
-	$(CC) $(CFLAGS) sprcomp.o -o sprcomp
+sprcomp$(OUT): sprcomp.o
+	$(CC) $(CFLAGS) sprcomp.o -o sprcomp$(OUT)

@@ -9,7 +9,8 @@
 #include <vga.h>
 #include "internal.h"
 
-char *air_vbuf, *air_palette;
+char *air_vbuf;
+unsigned char *air_palette;
 int air_mode_w, air_mode_h, air_mode_type;
 
 int air_init(int w, int h, int type)
@@ -71,7 +72,7 @@ void air_update(void)
 		vga_drawscanline(i, p);
 }
 
-void air_setpalette(char *palette)
+void air_setpalette(unsigned char *palette)
 {
 	int i;
 
@@ -82,7 +83,7 @@ void air_setpalette(char *palette)
 	return;
 }
 
-char *air_getpalette(void)
+unsigned char *air_getpalette(void)
 {
 	return air_palette;
 }

@@ -17,8 +17,8 @@ extern int air_mode_h, air_mode_w, air_mode_type;
 extern int air_init(int, int, int);
 extern void air_close(void);
 extern void air_update(void);
-extern void air_setpalette(char *);
-extern char *air_getpalette(void);
+extern void air_setpalette(unsigned char *);
+extern unsigned char *air_getpalette(void);
 
 #include <flash.h>
 

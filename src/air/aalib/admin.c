@@ -9,7 +9,8 @@
 #include <aalib.h>
 #include "internal.h"
 
-char *air_vbuf, *air_palette;
+char *air_vbuf;
+unsigned char *air_palette;
 int air_mode_w, air_mode_h, air_mode_type;
 struct aa_context *air_context;
 static aa_palette air_aa_palette;
@@ -73,7 +74,7 @@ void air_update(void)
 	aa_flush(air_context);
 }
 
-void air_setpalette(char *palette)
+void air_setpalette(unsigned char *palette)
 {
 	int i;
 
@@ -84,7 +85,7 @@ void air_setpalette(char *palette)
 	return;
 }
 
-char *air_getpalette(void)
+unsigned char *air_getpalette(void)
 {
 	return air_palette;
 }

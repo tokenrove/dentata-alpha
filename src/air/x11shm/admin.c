@@ -20,7 +20,7 @@ static GC graphcont;
 Display *air_x_display;
 Window air_x_window;
 XImage *air_vbuf;
-char *air_palette;
+unsigned char *air_palette;
 int air_mode_w, air_mode_h, air_mode_type;
 
 int air_init(int w, int h, int type)
@@ -108,7 +108,7 @@ void air_update(void)
 	XFlush(air_x_display);
 }
 
-void air_setpalette(char *palette)
+void air_setpalette(unsigned char *palette)
 {
 	int i;
 	XColor color;
@@ -132,7 +132,7 @@ void air_setpalette(char *palette)
 	return;
 }
 
-char *air_getpalette(void)
+unsigned char *air_getpalette(void)
 {
 	return air_palette;
 }
