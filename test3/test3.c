@@ -113,12 +113,17 @@ void mainloop(struct gamedat_s gd)
 				                           hp->colliderect.w*2,
 				                           nignore, ignore);
 				if(i == -1) {
-					heat_dialog(gd.font,"Who are you talking to?");
+					heat_dialog(gd.font,
+					            "Who are you talking to?",
+					            10, 10, 0, 4*(gd.font->height+1)+4);
 				} else if(i == gd.head) {
-					heat_dialog(gd.font,"[HEAD]\nsm4sh th3 m1dg3tz, r0d3nt!@#!@");
+					heat_dialog(gd.font,
+					            "[HEAD]\nsm4sh th3 m1dg"
+					            "3tz, r0d3nt!@#!@",
+					            10, 10, 0, 4*(gd.font->height+1)+4);
 				}
 			} else if(i == 1) { /* examine */
-				heat_dialog(gd.font, "The Dr Pepper does nothing.");
+				heat_dialog(gd.font, "The Dr Pepper does nothing.", 10, 10, 0, 4*(gd.font->height+1)+4);
 			} else if(i == 2) { /* other */
 				i = heat_menu(gd.font, menulen[1], menu[1]);
 				if(i == 0) /* status */
@@ -127,7 +132,7 @@ void mainloop(struct gamedat_s gd)
                                                     "things. This isn't a game!\n"
 					            "\n"
 					            "This is, however, a test\n"
-					            "of multiline dialog.");
+					            "of multiline dialog.", 10, 10, 0, 4*(gd.font->height+1)+4);
 				else if(i == 1) /* quit */
 					break;
 			}
