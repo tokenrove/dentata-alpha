@@ -1,0 +1,47 @@
+#
+# ukyo.spd (SPrite Description)
+# Sprite description file for Ukyo
+# Julian Squires <tek@wiw.org> 2000
+#
+
+# Output file name
+name ukyo.spr
+# Initial coordinates (include dummy values if not used)
+origin 0 0
+# Collision mode
+collide rectangle
+# Collision rectangle (include dummy values if not used)
+colliderect 10 10 16 16
+# Number of animations
+nanims 6
+
+# First animation (walking, facing right)
+# Composed of three PCX format frames, framelag 3.
+anim 3 3
+frame pcx ukyo/walkfr00.pcx
+frame pcx ukyo/walkfr01.pcx
+frame pcx ukyo/walkfr02.pcx
+
+# Walking, facing left
+anim 3 3
+frame pcx ukyo/walkfl00.pcx
+frame pcx ukyo/walkfl01.pcx
+frame pcx ukyo/walkfl02.pcx
+
+# Jumping, facing right
+anim 3 1
+frame pcx ukyo/jumpfr00.pcx
+
+# Jumping, facing left
+anim 3 1
+frame pcx ukyo/jumpfl00.pcx
+
+# Ducking, facing right
+anim 3 1
+frame pcx ukyo/duckfr00.pcx
+
+# Ducking, facing left
+anim 3 1
+frame pcx ukyo/duckfl00.pcx
+
+# EOF ukyo.spd

@@ -15,20 +15,30 @@ int main(int argc, char **argv)
 	FILE *fp;
 
 	if(argc != 3) {
+		printf("Usage:\nrepalette <PCX to change> <PCX from "
+		       "which to obtain new palette>\n");
 		exit(EXIT_FAILURE);
 	}
 
 	img = flash_loadpcx(argv[1]);
 	newpalimg = flash_loadpcx(argv[2]);
+	if(img == NULL || newpalimg == NULL) {
+		printf("Failed to load one of the images.\n");
+		exit(EXIT_FAILURE);
+	}
 
 	for(i = 0; i < img->width*img->height; i++) {
-		img->data[i] = flash_closestcolor(((unsigned)img->palette[3*(unsigned)img->data[i]+0])<<2,
-		                                  ((unsigned)img->palette[3*(unsigned)img->data[i]+1])<<2,
-		                                  ((unsigned)img->palette[3*(unsigned)img->data[i]+2])<<2,
+		img->data[i] = flash_closestcolor((img->palette[3*(unsigned)img->data[i]+0])<<2,
+		                                  (img->palette[3*(unsigned)img->data[i]+1])<<2,
+		                                  (img->palette[3*(unsigned)img->data[i]+2])<<2,
 		                                  newpalimg->palette);
 	}
 
 	fp = fopen(argv[1], "r+b");
+	if(fp == NULL) {
+		printf("Failed to open %s. (Something very bad has just "
+                       "occurred)\n", argv[1]);
+	}
 	fseek(fp, 128, SEEK_SET);
 	for(i = 0, run = 0; i < img->width*img->height; i++) {
 		if(i < img->width*img->height-1 &&
@@ -69,12 +79,13 @@ int main(int argc, char **argv)
 		run = 0;
 	}
 
+	fseek(fp, -768, SEEK_END);
+
 	for(i = 0; i < 256; i++) {
 		fputc(((unsigned)newpalimg->palette[3*i+0])<<2, fp);
 		fputc(((unsigned)newpalimg->palette[3*i+1])<<2, fp);
 		fputc(((unsigned)newpalimg->palette[3*i+2])<<2, fp);
 	}
-	ftruncate(fileno(fp), ftell(fp));
 	fclose(fp);
 
 	flash_imgdelete(img);

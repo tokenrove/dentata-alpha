@@ -1,0 +1,50 @@
+#
+# hao.spd (SPrite Description)
+# Sprite description file for Haohmaru
+# Julian Squires <tek@wiw.org> 2000
+#
+# This also makes a good template for other sprites.
+# Note that currently each field must be in the correct order. :-/
+#
+
+# Output file name
+name hao.spr
+# Initial coordinates (include dummy values if not used)
+origin 0 0
+# Collision mode
+collide rectangle
+# Collision rectangle (include dummy values if not used)
+colliderect 10 10 16 16
+# Number of animations
+nanims 6
+
+# First animation (walking, facing right)
+# Composed of three PCX format frames, framelag 3.
+anim 3 3
+frame pcx hao/walkfr00.pcx
+frame pcx hao/walkfr01.pcx
+frame pcx hao/walkfr02.pcx
+
+# Walking, facing left
+anim 3 3
+frame pcx hao/walkfl00.pcx
+frame pcx hao/walkfl01.pcx
+frame pcx hao/walkfl02.pcx
+
+# Jumping, facing right
+anim 3 1
+frame pcx hao/jumpfr00.pcx
+
+# Jumping, facing left
+anim 3 1
+frame pcx hao/jumpfl00.pcx
+
+# Ducking, facing right
+anim 3 1
+frame pcx hao/duckfr00.pcx
+
+# Ducking, facing left
+anim 3 1
+frame pcx hao/duckfl00.pcx
+
+# EOF hao.spd

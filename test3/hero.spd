@@ -1,0 +1,31 @@
+#
+# hero.spd (SPrite Description)
+# Julian Squires <tek@wiw.org> 2000
+#
+
+name hero.spr
+origin 152 92
+collide rectangle
+colliderect 0 0 16 16
+nanims 4
+
+# Walk back
+anim 6 2
+frame pcx spwlkb00.pcx
+frame pcx spwlkb01.pcx
+
+# Walk forward
+anim 6 2
+frame pcx spwlkf00.pcx
+frame pcx spwlkf01.pcx
+
+# Walk left
+anim 6 1
+frame pcx spwlkl00.pcx
+
+# Walk right
+anim 6 2
+frame pcx spwlkr00.pcx
+frame pcx spwlkr01.pcx
+
+# EOF hero.spd

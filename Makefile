@@ -13,19 +13,22 @@ export TARGET=svgalib
 #export LIBS=-laa
 #export TARGET=aalib
 
-default: tests
+default: libs tools tests
 
 libs:
 	make -C src
 
-tests: libs
+tools:
+	make -C utils
+
+tests: libs utils
 	make -C test1
 	make -C test2
 	make -C test3
 	make -C test4
 
 clean:
-	rm -f `find . -name "*~"` `find . -name "*.o"`
+	rm -f `find . -name "*~"` `find . -name "*.o"` `find . -name "*.spr"`
 
 realclean: clean
 	rm -f `find . -name "*.a"`

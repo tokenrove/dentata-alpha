@@ -1,5 +1,5 @@
 
-CFLAGS=-Wall -g -pg -I../../include
+CFLAGS=-Wall -g -I../../include
 OBJS=scroll.o tile.o
 
 default: $(OBJS)

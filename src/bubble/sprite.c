@@ -68,7 +68,10 @@ bubble_sprite_t *bubble_spriteload(char *filename)
 			form = fgetc(fp);
 			q = buffer;
 			do { *(q++) = fgetc(fp); } while(*(q-1) != 0);
-			if(form == 1) {
+			if(form == 0) {
+				flash_animaddframe(p->anims[i],
+				                   flash_loadpnm(buffer));
+			} else if(form == 1) {
 				flash_animaddframe(p->anims[i],
 				                   flash_loadpcx(buffer));
 			}
@@ -100,6 +103,11 @@ bubble_sprite_t *bubble_spritedup(bubble_sprite_t *p)
 int bubble_checkspritespritecollide(bubble_sprite_t *a, bubble_sprite_t *b)
 {
 	int i, j;
+	flash_image_t *p, *q;
+
+	if(a->collidemode == none || b->collidemode == none) return 0;
+	/* how unportable. */
+	if(b->collidemode == rectangle) (long)a ^= (long)b ^= (long)a ^= (long)b;
 
 	switch(a->collidemode) {
 	case rectangle:
@@ -120,12 +128,47 @@ int bubble_checkspritespritecollide(bubble_sprite_t *a, bubble_sprite_t *b)
 			}
 			break;
 		case pixel:
-		case none:
+p = b->anims[b->curanim]->frames[b->anims[b->curanim]->curframe/b->anims[b->curanim]->framelag];
+			for(i = a->y+a->colliderect.y;
+			    i < a->y+a->colliderect.y+a->colliderect.h;
+			    i++) {
+				for(j = a->x+a->colliderect.x;
+				    j < a->x+a->colliderect.x+a->colliderect.w;
+				    j++) {
+					if(j >= b->x+b->colliderect.x &&
+					   j <= b->x+b->colliderect.x+b->colliderect.w &&
+					   i >= b->y+b->colliderect.y &&
+					   i <= b->y+b->colliderect.y+b->colliderect.h &&
+				           p->data[(j-b->x)+(i-b->y)*p->width] != 0)
+						return 1;
+				}
+			}
 		default:
 			break;
 		}
 	case pixel:
-	case none:
+		switch(b->collidemode) {
+		case pixel:
+p = a->anims[a->curanim]->frames[a->anims[a->curanim]->curframe/a->anims[a->curanim]->framelag];
+q = b->anims[b->curanim]->frames[b->anims[b->curanim]->curframe/b->anims[b->curanim]->framelag];
+			for(i = a->y+a->colliderect.y;
+			    i < a->y+a->colliderect.y+a->colliderect.h;
+			    i++) {
+				for(j = a->x+a->colliderect.x;
+				    j < a->x+a->colliderect.x+a->colliderect.w;
+				    j++) {
+					if(j >= b->x+b->colliderect.x &&
+					   j <= b->x+b->colliderect.x+b->colliderect.w &&
+					   i >= b->y+b->colliderect.y &&
+					   i <= b->y+b->colliderect.y+b->colliderect.h &&
+					   p->data[(i-a->x)+(j-a->y)*p->width] != 0 &&
+				           q->data[(i-b->x)+(j-b->y)*q->width] != 0)
+						return 1;
+				}
+			}
+		default:
+			break;
+		}
 	default:
 		break;
 	}

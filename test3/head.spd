@@ -1,0 +1,18 @@
+#
+# head.spd (SPrite Description)
+# Julian Squires <tek@wiw.org> 2000
+#
+
+name head.spr
+origin 310 100
+collide pixel
+colliderect 0 0 0 0
+nanims 1
+
+# Float, like a fucking giant samurai head should.
+anim 6 3
+frame pcx head01.pcx
+frame pcx head00.pcx
+frame pcx head02.pcx
+
+# EOF head.spd

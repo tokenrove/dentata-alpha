@@ -1,6 +1,6 @@
 
 Format byte values:
- 0 -> PCX
- 1 -> PNM
+ 0 -> PNM
+ 1 -> PCX
 ...
 
