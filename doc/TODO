@@ -1,56 +1,62 @@
 
-documentation
+BUGS (things that don't behave the way they should)
 
-globally:
-	error checking, status, handling
-	optimized blits
-	option to premultiply alphas in blits
-	fix a few minor endian nits (notably in file reading)
+(air/*) 16BPP support is broken, particularly alpha handling, and SVGAlib
+(flash) superior PCX support
+(flash) more PNM support
 
-air:
-	24bpp
-	x11 vanilla port
 
-flash:
-	correctly track palette type information
-	better closestcolor algorithm
-	png, tiff, tga support
-	more complete pnm and pcx support
+WARTS/VAPOR (things that are ugly, or things that haven't been done and
+             should be finished)
 
-metal:
-	mouse support
-	x11 port
-	more robust dos handler
+Documentation
+Error checking, status, handling
+(air/*, flash, ...) 24BPP support
+(flash) TGA support
+(metal) Better handling of multiple device support. (clean interface to
+	keyboard, mouse, joystick, controller, et cetera)
+(metal) more robust DOS keyboard handler
+(quick) more accurate DOS timer
+(quick) select on empty list instead of usleep for portability
+(crash) support for more complex format specifiers
+(wood) better playfield collision handling
+(bubble) possible removal of ray collision check, or optimization with
+	algorithm from Graphics Gems
+(bubble) gencolliderect code should go on a pixel-by-pixel basis
+(heat) more box styles
+stage2 design
+(wood) plane handles, like bubble's sprite handles
+(bubble) saner sprite handle support, without as much memory wastage
 
-quick:
-	more accurate dos timer?
-	select() instead of usleep()
 
-crash:
-	deal with newlines
-	support for more complex format specifiers
-	allow bounding box support, for word wrapping
-	support multicolor fonts
+WISHLIST (bells and whistles, or things which we aren't sure are necessary
+	  or even good)
 
-wood:
-	optimization: recalc of layers when pan is called, not
-	  when update is called
-	optimization: incremental updates of layers based on pan
-	  amount (shift whole image left 1, then only draw the slack
-	  pixels)
-	sane playfield collision handling
+(drwily) Optimized blits
+Option to premultiply alphas in blits
+Tilemap browser
+Sprite browser
+(air) vanilla X11 support
+(flash) Improved closestcolor algorithms?
+(flash) PNG support
+(flash) TIFF support
+(metal) mouse support
+(crash) bounding box, word wrap support?
+(crash) multicolor fonts?
+(crash) deal with newlines?
+(wood) potential optimizations wrt layer recalculations on pan, incremental
+	updates
+(heat) sprite trails
+(heat) high-alpha overlays
+(heat) geometric transitions
+(heat) complex (ff-like) screen blur/fade effects
+(heat) star field
+(heat) fire effects
+(heat) shared effects buffer optimization
+(heat) morphing for inbetweening
+(heat) dialog box type rate
+(heat) perpective transform
+(heat) shearing
+(heat,flash?) scaling
+dokipan design
 
-heat:
-	naive fading effects (screen to <color>, <color> to screen, screen
-	                      to screen)
-	sprite trails
-	high-alpha overlays
-	complex (ff-like) screen blur/fade effects
-	star field
-	limited and unlimited palette fire, optionally with alpha
-	sane handling of dialog boxes with concurrent screen movement?
-	optimization: shared effects buffer
-
-bubble:
-	sprite-sprite collision handlers using ranges to avoid wasting
-	  time with many sprites (see Graphics Gems, 
