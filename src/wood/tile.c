@@ -23,6 +23,7 @@ wood_tilemap_t *wood_loadtilemap(char *filename)
 
 	p->width = fgetc(fp)|(fgetc(fp)<<8);
 	p->height = fgetc(fp)|(fgetc(fp)<<8);
+	p->walkthresh = fgetc(fp);
 	p->ntiles = fgetc(fp);
 	p->tiles = malloc(sizeof(flash_image_t *)*p->ntiles);
 	if(p->tiles == NULL) return NULL;

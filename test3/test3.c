@@ -38,47 +38,53 @@ void mainloop(struct gamedat_s gd)
 	void *qh;
 	bubble_sprite_t *hp;
 
+	hp = bubble_getspritebyhandle(gd.head);
+	bubble_spritegencolliderect(hp);
 	hp = bubble_getspritebyhandle(gd.hero);
+	bubble_spritegencolliderect(hp);
 
 	while(1) {
 		metal_update();
 		if(metal_ishit(METAL_K_ESCAPE))
 			break;
 		if(metal_ishit(METAL_K_LEFT)) {
-			bubble_pansprite(gd.hero, -1, 0);
-			if(hp->x-wood_camera_x < SCRW/2)
-				wood_pan(-1, 0);
+			if(wood_iswalkablerect(hp->x-1, hp->y,
+			                       hp->colliderect.w,
+			                       hp->colliderect.h)){
+				bubble_pansprite(gd.hero, -1, 0);
+				if(hp->x-wood_camera_x < SCRW/2)
+					wood_pan(-1, 0);
+			}
 			bubble_setspriteanim(gd.hero, 2);
 		}
 		if(metal_ishit(METAL_K_RIGHT)) {
-			bubble_pansprite(gd.hero, 1, 0);
-			if(hp->x-wood_camera_x > SCRW/2)
-				wood_pan(1, 0);
+			if(wood_iswalkablerect(hp->x+1, hp->y,
+			                       hp->colliderect.w,
+			                       hp->colliderect.h)){
+				bubble_pansprite(gd.hero, 1, 0);
+				if(hp->x-wood_camera_x > SCRW/2)
+					wood_pan(1, 0);
+			}
 			bubble_setspriteanim(gd.hero, 3);
 		}
 		if(metal_ishit(METAL_K_UP)) {
-			bubble_pansprite(gd.hero, 0, -1);
-			if(hp->y-wood_camera_y < SCRH/2)
-				wood_pan(0, -1);
-/*
-			if(wood_tiletype(sprx, spry-1) < 2 &&
-			   wood_tiletype(sprx+sprw-1, spry-1) < 2) {
-				if(spry > SCRH/2) spry--;
-				else if(wood_pan(0, -1)&2 && spry >= 0)
-					spry--;
-			} */
+			if(wood_iswalkablerect(hp->x, hp->y-1,
+			                       hp->colliderect.w,
+			                       hp->colliderect.h)){
+				bubble_pansprite(gd.hero, 0, -1);
+				if(hp->y-wood_camera_y < SCRH/2)
+					wood_pan(0, -1);
+			}
 			bubble_setspriteanim(gd.hero, 0);
 		}
 		if(metal_ishit(METAL_K_DOWN)) {
-			bubble_pansprite(gd.hero, 0, 1);
-			if(hp->y-wood_camera_y > SCRH/2)
-				wood_pan(0, 1);
-/*			if(wood_tiletype(sprx, spry+sprh) < 2 &&
-			   wood_tiletype(sprx+sprw-1, spry+sprh) < 2) {
-				if(spry < SCRH/2) spry++;
-				else if(wood_pan(0, 1)&2 && spry < SCRH)
-					spry++;
-			} */
+			if(wood_iswalkablerect(hp->x, hp->y+1,
+			                       hp->colliderect.w,
+			                       hp->colliderect.h)){
+				bubble_pansprite(gd.hero, 0, 1);
+				if(hp->y-wood_camera_y > SCRH/2)
+					wood_pan(0, 1);
+			}
 			bubble_setspriteanim(gd.hero, 1);
 		}
 		if(metal_ishit(METAL_K_ENTER)) {
@@ -104,7 +110,6 @@ void mainloop(struct gamedat_s gd)
 int main(int argc, char **argv)
 {
 	struct gamedat_s gd;
-	int i;
 
 	if(air_init(SCRW, SCRH, SCRTYPE) != 1) exit(EXIT_FAILURE);
 
@@ -141,11 +146,12 @@ int main(int argc, char **argv)
 int actionmenu(struct gamedat_s gd)
 {
 	int pos = 0, x = 0, w, h;
+	char menu[2][5] = { "Talk", "Quit" };
 	void *qh;
 
-	w = 4+(gd.font->width+1)*(strlen("talk to")+1);
-	w = max(w, 4+(gd.font->width+1)*(strlen("quit")+1));
-	h = 4+(gd.font->height+3)*2;
+	w = 4+(gd.font->width+1)*(strlen(menu[0])+1);
+	w = max(w, 4+(gd.font->width+1)*(strlen(menu[1])+1));
+	h = 4+(gd.font->height+1)*2;
 
 	while(metal_ishit(METAL_K_ENTER)) metal_update();
 	while(1) {
@@ -162,8 +168,8 @@ int actionmenu(struct gamedat_s gd)
 		heat_box(100-gd.font->width-1, 40-1, w, h, flat,
 		         flash_closestcolor(255,255,255,air_getpalette()),
 		         flash_closestcolor(0,0,255,air_getpalette()));
-		crash_printf(100, 40+1, gd.font, "talk to");
-		crash_printf(100, 40+gd.font->height+1, gd.font, "quit");
+		crash_printf(100, 40+1, gd.font, menu[0]);
+		crash_printf(100, 40+gd.font->height+1, gd.font, menu[1]);
 		if((x/6)%2 == 0)
 			crash_printf(100-gd.font->width,
 			             40+1+(pos*gd.font->height),

@@ -1,4 +1,4 @@
-print pack("SSC", 40, 14, 6);
+print pack("SSCC", 40, 14, 2, 6);
 print 'tigrass.pcx'.pack("C",0).'tifloor.pcx'.pack("C",0);
 print 'titree.pcx'.pack("C",0).'tiwall.pcx'.pack("C",0);
 print 'tidoor.pcx'.pack("C",0).'tiwater.pcx'.pack("C",0);
