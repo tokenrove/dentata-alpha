@@ -69,9 +69,9 @@ void air_setpalette(unsigned char *palette)
 {
 	int i;
 
-	outb(0x3c8, 0);
+	outportb(0x3c8, 0);
 	for(i = 0; i < 256*3; i++)
-		outb(0x3c9, palette[i]);
+		outportb(0x3c9, palette[i]>>2);
 	air_palette = palette;
 	return;
 }
