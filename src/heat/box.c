@@ -16,6 +16,7 @@
 
 void heat_box(int, int, int, int, heat_boxstyle_t, int, int);
 void heat_dialog(crash_font_t *font, char *s);
+int heat_menu(crash_font_t *font, int menulen, char **menu);
 
 void heat_box(int x, int y, int w, int h, heat_boxstyle_t style, int bcol,
               int fill)
@@ -66,18 +67,18 @@ void heat_dialog(crash_font_t *font, char *s)
 		q = p = s; i = 0;
 		while((q = strchr(q, '\n')) != NULL) {
 			q++;
-			strncpy(buffer, p, strcspn(p, "\n")-1);
+			strncpy(buffer, p, strcspn(p, "\n"));
 			crash_printf(80, 60+(font->height+1)*i+1, font, "%s", buffer);
 			p = q;
 			i++;
-			if(i > nlines) break;
+			if(i >= nlines) break;
 		}
 		crash_printf(80, 60+(font->height+1)*i+1, font, "%s", p);
 /*
 		if((x/6)%2 == 0)
 			crash_printf(100-gd.font->width,
 			             40+1+(pos*gd.font->height),
-		                     gd.font, ">");
+		                     gd.font, "\x10");
 		x++;
  */
 
@@ -86,6 +87,54 @@ void heat_dialog(crash_font_t *font, char *s)
 	}
 	while(metal_ishit(METAL_K_ENTER)) metal_update();
 	return;
+}
+
+int heat_menu(crash_font_t *font, int menulen, char **menu)
+{
+	int x = 0, w, h, i, pos = 0;
+	void *qh;
+
+	w = 0;
+	for(i = 0; i < menulen; i++) {
+		w = max(w, 4+(font->width+1)*(strlen(menu[i])+1));
+	}
+	h = 4+(font->height+1)*menulen;
+
+	while(metal_ishit(METAL_K_ENTER)) metal_update();
+	while(1) {
+		metal_update();
+		if(metal_ishit(METAL_K_DOWN))
+			if(pos < menulen-1) pos++;
+		if(metal_ishit(METAL_K_UP))
+			if(pos > 0) pos--;
+		if(metal_ishit(METAL_K_ENTER))
+			break;
+		if(metal_ishit(METAL_K_ESCAPE)) {
+			pos = -1;
+			break;
+		}
+
+		qh = quick_start(FRAMESPERSECOND);
+
+		heat_box(100-font->width-1, 40-1, w, h, flat,
+		         flash_closestcolor(255,255,255,air_getpalette()),
+		         flash_closestcolor(0,0,255,air_getpalette()));
+		for(i = 0; i < menulen; i++) {
+			crash_printf(100, 40+(font->height+1)*i+1, font, "%s", menu[i]);
+		}
+
+		if((x/6)%2 == 0)
+			crash_printf(100-font->width,
+			             40+1+pos*(font->height+1),
+		                     font, "\x10");
+		x++;
+
+		air_update();
+		quick_stop(qh);
+	}
+	while(metal_ishit(METAL_K_ENTER) || metal_ishit(METAL_K_ESCAPE))
+		metal_update();
+	return pos;
 }
 
 /* EOF box.c */

@@ -16,6 +16,7 @@
 #include <crash.h>
 #include <bubble.h>
 #include <heat.h>
+#include <string.h>
 
 #define FRAMESPERSECOND 24
 #define BUFLEN 81
@@ -29,7 +30,7 @@ struct gamedat_s {
 };
 
 void scrollie(struct gamedat_s gd);
-int actionmenu(struct gamedat_s gd);
+void credits(struct gamedat_s gd);
 void mainloop(struct gamedat_s gd);
 
 void mainloop(struct gamedat_s gd)
@@ -37,7 +38,18 @@ void mainloop(struct gamedat_s gd)
 	int i, nignore = 1, ignore[1];
 	float theta;
 	void *qh;
+	int menulen[] = { 3, 2 };
+	char ***menu;
 	bubble_sprite_t *hp;
+
+	menu = malloc(2*sizeof(char **));
+	menu[0] = malloc(menulen[0]*sizeof(char *));
+	menu[0][0] = strdup("Talk");
+	menu[0][1] = strdup("Examine");
+	menu[0][2] = strdup("Other \x10");
+	menu[1] = malloc(menulen[1]*sizeof(char *));
+	menu[1][0] = strdup("Status");
+	menu[1][1] = strdup("Quit");
 
 	ignore[0] = gd.hero;
 
@@ -95,7 +107,7 @@ void mainloop(struct gamedat_s gd)
 			theta = (3*M_PI)/2;
 		}
 		if(metal_ishit(METAL_K_ENTER)) {
-			i = actionmenu(gd);
+			i = heat_menu(gd.font, menulen[0], menu[0]);
 			if(i == 0) { /* talk to */
 				i = bubble_checkraycollide(hp->x, hp->y,
 				                           theta,
@@ -104,10 +116,18 @@ void mainloop(struct gamedat_s gd)
 				if(i == -1) {
 					heat_dialog(gd.font,"Who are you talking to?");
 				} else if(i == gd.head) {
-					heat_dialog(gd.font,"[HEAD]\nMugu mugu.");
+					heat_dialog(gd.font,"[HEAD]\nsm4sh th3 m1dg3tz, r0d3nt!@#!@");
 				}
-			} else if(i == 1) { /* quit */
-				break;
+			} else if(i == 1) { /* examine */
+				heat_dialog(gd.font, "The Dr Pepper does nothing.");
+			} else if(i == 2) { /* other */
+				i = heat_menu(gd.font, menulen[1], menu[1]);
+				if(i == 0) /* status */
+					heat_dialog(gd.font,
+                                                    "Don't worry about such \n"
+                                                    "things. This isn't a game!");
+				else if(i == 1) /* quit */
+					break;
 			}
 		}
 
@@ -149,6 +169,8 @@ int main(int argc, char **argv)
 
 	mainloop(gd);
 
+	credits(gd);
+
 	bubble_close();
 	wood_wipe(0, 0, 0);
 	crash_delete(gd.font);
@@ -157,46 +179,63 @@ int main(int argc, char **argv)
 	exit(EXIT_SUCCESS);
 }
 
-#define max(x, y) (((x) < (y)) ? (y) : (x))
-
-int actionmenu(struct gamedat_s gd)
+void credits(struct gamedat_s gd)
 {
-	int pos = 0, x = 0, w, h;
-	char menu[2][5] = { "Talk", "Quit" };
 	void *qh;
+	int pos = SCRH;
+	int msglen = 17;
+	char *msg[] = { "Programming", "Tek", "",
+                        "Concept", "Square and a thousand others",
+	                "", "Thanks", "Retsyn", "Astfgl", "Dum2007",
+	                "Obliviax", "Fract", "", "",
+	                "No floating samurai heads were",
+	                "harmed in the production of ", "this demo" };
+	int msgemph[] = { 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+	flash_image_t *bg;
+	int i, inc, bginc;
+	crash_font_t *emph;
 
-	w = 4+(gd.font->width+1)*(strlen(menu[0])+1);
-	w = max(w, 4+(gd.font->width+1)*(strlen(menu[1])+1));
-	h = 4+(gd.font->height+1)*2;
+	bg = flash_loadpcx("stars.pcx");
+	emph = crash_loadrawfont("future.f14", 8, 14,
+	                         flash_closestcolor(192, 0, 0,
+	                                            air_getpalette()));
 
-	while(metal_ishit(METAL_K_ENTER)) metal_update();
-	while(1) {
+	inc = bginc = 0;
+	while(pos+inc > SCRH/2) {
 		metal_update();
-		if(metal_ishit(METAL_K_DOWN))
-			if(pos < 1) pos++;
-		if(metal_ishit(METAL_K_UP))
-			if(pos > 0) pos--;
-		if(metal_ishit(METAL_K_ENTER))
+		if(metal_ishit(METAL_K_ESCAPE))
 			break;
 
-		qh = quick_start(FRAMESPERSECOND);
+		qh = quick_start(24);
 
-		heat_box(100-gd.font->width-1, 40-1, w, h, flat,
-		         flash_closestcolor(255,255,255,air_getpalette()),
-		         flash_closestcolor(0,0,255,air_getpalette()));
-		crash_printf(100, 40+1, gd.font, menu[0]);
-		crash_printf(100, 40+gd.font->height+1, gd.font, menu[1]);
-		if((x/6)%2 == 0)
-			crash_printf(100-gd.font->width,
-			             40+1+(pos*gd.font->height),
-		                     gd.font, ">");
-		x++;
+		air_vanillablit(bg, 0, bginc);
+
+		if(bginc > -99) bginc-=2;
+
+		for(i = 0, inc = 0; i < msglen; i++) {
+			if(msgemph[i]) {
+				crash_printf(SCRW/2-(strlen(msg[i])*(gd.font->width+1))/2,
+				             pos+inc,
+				             emph, msg[i]);
+				inc += emph->height+1;
+			} else {
+				crash_printf(SCRW/2-(strlen(msg[i])*(gd.font->width+1))/2,
+				             pos+inc,
+				             gd.font, msg[i]);
+				inc += gd.font->height+1;
+			}
+		}
+		pos--;
 
 		air_update();
 		quick_stop(qh);
 	}
-	while(metal_ishit(METAL_K_ENTER)) metal_update();
-	return pos;
+
+	quick_wait(1000000);
+
+	flash_imgdelete(bg);
+
+	return;
 }
 
 void scrollie(struct gamedat_s gd)

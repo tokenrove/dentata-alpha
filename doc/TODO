@@ -49,6 +49,8 @@ heat:
 	star field
 	limited and unlimited palette fire, optionally with alpha
 	sane handling of dialog boxes with concurrent screen movement?
+	snow
+	
 
 bubble:
 	sprite-sprite collision handlers using ranges to avoid wasting time with many sprites

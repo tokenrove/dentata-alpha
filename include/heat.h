@@ -11,6 +11,7 @@ typedef enum { nil, flat, bevel, curvebevel } heat_boxstyle_t;
 
 extern void heat_box(int, int, int, int, heat_boxstyle_t, int, int);
 extern void heat_dialog(crash_font_t *, char *);
+extern int heat_menu(crash_font_t *, int, char **);
 
 #endif
 

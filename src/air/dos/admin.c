@@ -13,7 +13,7 @@
 #include <sys/farptr.h>
 #include "internal.h"
 
-char *air_vbuf, *palette;
+char *air_vbuf, *air_palette;
 int air_mode_w, air_mode_h, air_mode_type;
 
 int air_init(int w, int h, int type)
