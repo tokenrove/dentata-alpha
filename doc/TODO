@@ -1,7 +1,6 @@
 
 documentation
-message box, menu code
-snow
+multipage message box
 test4
 
 globally:
@@ -12,7 +11,6 @@ globally:
 air:
 	other modes
 	aalib port
-	x11 mitshm port
 	x11 vanilla port
 
 flash:
@@ -42,16 +40,17 @@ wood:
 	optimization: incremental updates of layers based on pan
 	  amount (shift whole image left 1, then only draw the slack
 	  pixels)
+	sane playfield collision handling
 
 heat:
-	naive fading effects (screen to <color>, <color> to screen)
+	naive fading effects (screen to <color>, <color> to screen, screen
+	                      to screen)
 	sprite trails
 	high-alpha overlays
 	complex (ff-like) screen blur/fade effects
 	star field
 	limited and unlimited palette fire, optionally with alpha
 	sane handling of dialog boxes with concurrent screen movement?
-	snow
 	optimization: shared effects buffer
 
 bubble:

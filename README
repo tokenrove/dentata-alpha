@@ -1,0 +1,15 @@
+
+Build instructions:
+
+Edit the top-level Makefile, and uncomment the appropriate export
+lines for OUT, TARGET, and LIBS, then run ``make''.
+
+Note that the AAlib version does not use the same keys as other
+versions. Here is the current mapping:
+	AAlib		Others
+	  q		Escape
+	  w		Up
+	  a		Left
+	  s		Down
+	  d		Right
+	  '		Enter

@@ -8,6 +8,9 @@ endif
 ifeq ($(TARGET), dos)
 FOO=dos
 endif
+ifeq ($(TARGET), aalib)
+FOO=aalib
+endif
 
 default:
 	make -C $(FOO)

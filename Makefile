@@ -9,6 +9,9 @@ export TARGET=svgalib
 #export LIBS=
 #export OUT=.exe
 #export TARGET=dos
+# AAlib:
+#export LIBS=-laa
+#export TARGET=aalib
 
 default: tests
 
