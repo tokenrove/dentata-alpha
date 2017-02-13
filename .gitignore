@@ -1,0 +1,15 @@
+*.o
+lib/
+
+test1/test1
+test1/test1-16a1
+test1/test1-16a8
+test2/test2
+test3/test3
+test4/test4
+utils/repal
+utils/sprcomp
+utils/tmcomp
+
+*.spr
+*.map
