@@ -15,7 +15,10 @@ export TARGET=svgalib
 
 default: libs tools tests
 
-libs:
+lib/:
+	mkdir -p lib
+
+libs: lib/
 	make -C src
 
 tools:

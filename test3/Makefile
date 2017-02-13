@@ -21,7 +21,7 @@ test3$(OUT): test3.o hero.spr head.spr world00.map
 %.spr: %.spd
 	$(SPRCOMP) $<
 
-%.map: %.spd
+%.map: %.mpd
 	$(TMCOMP) $<
 
 clean:

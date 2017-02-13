@@ -107,8 +107,9 @@ int bubble_checkspritespritecollide(bubble_sprite_t *a, bubble_sprite_t *b)
 	flash_image_t *p, *q;
 
 	if(a->collidemode == none || b->collidemode == none) return 0;
-	/* how unportable. */
-	if(b->collidemode == rectangle) (long)a ^= (long)b ^= (long)a ^= (long)b;
+	if(b->collidemode == rectangle) {
+		long t = a; a = b; b = t;
+	}
 
 	switch(a->collidemode) {
 	case rectangle:
